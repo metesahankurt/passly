@@ -20,12 +20,32 @@ export function deleteEncryptedVault(): void {
   localStorage.removeItem(VAULT_KEY);
 }
 
-export function exportVaultFile(vault: EncryptedVault): void {
-  const blob = new Blob([JSON.stringify(vault, null, 2)], { type: "application/json" });
+export async function exportVaultFile(vault: EncryptedVault): Promise<void> {
+  const content = JSON.stringify(vault, null, 2);
+  const filename = `passly-vault-${Date.now()}.psv`;
+
+  // showSaveFilePicker works in Edge/WebView2 (Windows Tauri) and Chrome
+  if (typeof window !== "undefined" && "showSaveFilePicker" in window) {
+    try {
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: "Passly Vault", accept: { "application/json": [".psv"] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return;
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+    }
+  }
+
+  // Fallback: anchor click (macOS WebKit)
+  const blob = new Blob([content], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `passwords-vault-${Date.now()}.psv`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

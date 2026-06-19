@@ -163,5 +163,26 @@
     "emptyDescription": "Fügen Sie Ihr erstes Passwort hinzu — es wird verschlüsselt.",
     "noResultsTitle": "Keine Ergebnisse gefunden",
     "noResultsDescription": "Versuchen Sie einen anderen Suchbegriff."
+  },
+  "Onboarding": {
+    "welcome": "Willkommen bei Passly",
+    "subtitle": "Ihre Passwörter, verschlüsselt und lokal. Für immer.",
+    "featureLocal": "Vollständig Lokal",
+    "featureLocalDesc": "Keine Cloud, keine Server. Ihre Daten bleiben auf Ihrem Gerät.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Militärische Verschlüsselung schützt jeden Eintrag.",
+    "featurePrivate": "Zero Knowledge",
+    "featurePrivateDesc": "Kein Konto erforderlich. Nur Sie haben den Schlüssel.",
+    "getStarted": "Loslegen",
+    "createVault": "Ihren Tresor erstellen",
+    "createVaultSubtitle": "Richten Sie Ihr Profil ein, um fortzufahren",
+    "nameLabel": "Ihr Name",
+    "namePlaceholder": "Geben Sie Ihren Namen ein",
+    "colorLabel": "Profilfarbe",
+    "startButton": "Meinen Tresor erstellen",
+    "backButton": "Zurück",
+    "nameError": "Bitte geben Sie Ihren Namen ein",
+    "nameErrorShort": "Der Name muss mindestens 2 Zeichen lang sein",
+    "yourVault": "Ihr Tresor"
   }
 }

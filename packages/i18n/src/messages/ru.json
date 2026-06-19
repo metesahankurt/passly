@@ -163,5 +163,26 @@
     "emptyDescription": "Добавьте первый пароль — он будет зашифрован.",
     "noResultsTitle": "Результатов не найдено",
     "noResultsDescription": "Попробуйте другой поисковый запрос."
+  },
+  "Onboarding": {
+    "welcome": "Добро пожаловать в Passly",
+    "subtitle": "Ваши пароли, зашифрованные и локальные. Навсегда.",
+    "featureLocal": "Полностью Локально",
+    "featureLocalDesc": "Без облака, без серверов. Ваши данные остаются на вашем устройстве.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Военное шифрование защищает каждую запись.",
+    "featurePrivate": "Нулевые Знания",
+    "featurePrivateDesc": "Аккаунт не нужен. Только у вас есть ключ.",
+    "getStarted": "Начать",
+    "createVault": "Создайте Хранилище",
+    "createVaultSubtitle": "Настройте профиль для продолжения",
+    "nameLabel": "Ваше Имя",
+    "namePlaceholder": "Введите ваше имя",
+    "colorLabel": "Цвет Профиля",
+    "startButton": "Создать Хранилище",
+    "backButton": "Назад",
+    "nameError": "Пожалуйста, введите ваше имя",
+    "nameErrorShort": "Имя должно содержать не менее 2 символов",
+    "yourVault": "Ваше Хранилище"
   }
 }

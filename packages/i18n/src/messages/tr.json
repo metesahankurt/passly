@@ -163,5 +163,26 @@
     "versionTitle": "Yeni Sürüm Yayınlandı",
     "versionDescription": "Yeni özellikler ve iyileştirmeler için en son sürümü kontrol edin.",
     "versionTime": "2 gün önce"
+  },
+  "Onboarding": {
+    "welcome": "Passly'e Hoş Geldiniz",
+    "subtitle": "Şifreleriniz, şifreli ve yerel. Sonsuza dek.",
+    "featureLocal": "Tamamen Yerel",
+    "featureLocalDesc": "Bulut yok, sunucu yok. Verileriniz cihazınızda kalır.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Askeri düzeyde şifreleme her kaydı korur.",
+    "featurePrivate": "Sıfır Bilgi",
+    "featurePrivateDesc": "Hesap gerekmez. Anahtara yalnızca siz sahipsiniz.",
+    "getStarted": "Başla",
+    "createVault": "Kasanızı Oluşturun",
+    "createVaultSubtitle": "Devam etmek için profilinizi ayarlayın",
+    "nameLabel": "Adınız",
+    "namePlaceholder": "Adınızı girin",
+    "colorLabel": "Profil Rengi",
+    "startButton": "Kasamı Oluştur",
+    "backButton": "Geri",
+    "nameError": "Lütfen adınızı girin",
+    "nameErrorShort": "Ad en az 2 karakter olmalıdır",
+    "yourVault": "Kasanız"
   }
 }

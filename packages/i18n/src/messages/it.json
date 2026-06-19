@@ -163,5 +163,26 @@
     "emptyDescription": "Aggiungi la tua prima password — verrà crittografata.",
     "noResultsTitle": "Nessun risultato",
     "noResultsDescription": "Prova un termine di ricerca diverso."
+  },
+  "Onboarding": {
+    "welcome": "Benvenuto su Passly",
+    "subtitle": "Le tue password, cifrate e locali. Per sempre.",
+    "featureLocal": "Completamente Locale",
+    "featureLocalDesc": "Nessun cloud, nessun server. I tuoi dati rimangono sul tuo dispositivo.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "La crittografia militare protegge ogni voce.",
+    "featurePrivate": "Zero Conoscenza",
+    "featurePrivateDesc": "Nessun account necessario. Solo tu hai la chiave.",
+    "getStarted": "Inizia",
+    "createVault": "Crea il tuo Vault",
+    "createVaultSubtitle": "Configura il tuo profilo per continuare",
+    "nameLabel": "Il tuo Nome",
+    "namePlaceholder": "Inserisci il tuo nome",
+    "colorLabel": "Colore del Profilo",
+    "startButton": "Crea il mio Vault",
+    "backButton": "Indietro",
+    "nameError": "Inserisci il tuo nome",
+    "nameErrorShort": "Il nome deve avere almeno 2 caratteri",
+    "yourVault": "Il tuo Vault"
   }
 }

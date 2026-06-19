@@ -82,7 +82,9 @@ export function AppSidebar({
                   alt="Passly"
                   className={`size-6 shrink-0 object-contain ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
                 />
-                <span className="font-semibold text-base">Passly</span>
+                <span className="font-semibold text-base truncate">
+                  {name ? `${name} Vault` : "Passly"}
+                </span>
               </LinkComponent>
             </SidebarMenuButton>
           </SidebarMenuItem>

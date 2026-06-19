@@ -163,5 +163,26 @@
     "versionTitle": "New Version Released",
     "versionDescription": "Check the latest version for new features and improvements.",
     "versionTime": "2 days ago"
+  },
+  "Onboarding": {
+    "welcome": "Welcome to Passly",
+    "subtitle": "Your passwords, encrypted and local. Forever.",
+    "featureLocal": "Fully Local",
+    "featureLocalDesc": "No cloud, no servers. Your data stays on your device.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Military-grade encryption protects every entry.",
+    "featurePrivate": "Zero Knowledge",
+    "featurePrivateDesc": "No account needed. Only you have the key.",
+    "getStarted": "Get Started",
+    "createVault": "Create Your Vault",
+    "createVaultSubtitle": "Set up your profile to continue",
+    "nameLabel": "Your Name",
+    "namePlaceholder": "Enter your name",
+    "colorLabel": "Profile Color",
+    "startButton": "Create My Vault",
+    "backButton": "Back",
+    "nameError": "Please enter your name",
+    "nameErrorShort": "Name must be at least 2 characters",
+    "yourVault": "Your Vault"
   }
 }

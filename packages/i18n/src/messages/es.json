@@ -163,5 +163,26 @@
     "emptyDescription": "Añada su primera contraseña — se guardará cifrada.",
     "noResultsTitle": "Sin resultados",
     "noResultsDescription": "Pruebe con otro término de búsqueda."
+  },
+  "Onboarding": {
+    "welcome": "Bienvenido a Passly",
+    "subtitle": "Sus contraseñas, cifradas y locales. Para siempre.",
+    "featureLocal": "Completamente Local",
+    "featureLocalDesc": "Sin nube, sin servidores. Sus datos permanecen en su dispositivo.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "El cifrado militar protege cada entrada.",
+    "featurePrivate": "Conocimiento Cero",
+    "featurePrivateDesc": "Sin cuenta necesaria. Solo usted tiene la clave.",
+    "getStarted": "Comenzar",
+    "createVault": "Cree su Bóveda",
+    "createVaultSubtitle": "Configure su perfil para continuar",
+    "nameLabel": "Su Nombre",
+    "namePlaceholder": "Ingrese su nombre",
+    "colorLabel": "Color de Perfil",
+    "startButton": "Crear mi Bóveda",
+    "backButton": "Volver",
+    "nameError": "Por favor ingrese su nombre",
+    "nameErrorShort": "El nombre debe tener al menos 2 caracteres",
+    "yourVault": "Su Bóveda"
   }
 }

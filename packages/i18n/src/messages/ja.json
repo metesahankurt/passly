@@ -163,5 +163,26 @@
     "emptyDescription": "最初のパスワードを追加してください — 暗号化して保存されます。",
     "noResultsTitle": "結果が見つかりません",
     "noResultsDescription": "別の検索語を試してください。"
+  },
+  "Onboarding": {
+    "welcome": "Passlyへようこそ",
+    "subtitle": "パスワードを暗号化してローカルに保存。永遠に。",
+    "featureLocal": "完全ローカル",
+    "featureLocalDesc": "クラウドなし、サーバーなし。データはデバイスに保存されます。",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "軍事レベルの暗号化がすべてのエントリを保護します。",
+    "featurePrivate": "ゼロ知識",
+    "featurePrivateDesc": "アカウント不要。鍵を持つのはあなただけです。",
+    "getStarted": "はじめる",
+    "createVault": "ボールトを作成",
+    "createVaultSubtitle": "続行するにはプロフィールを設定してください",
+    "nameLabel": "お名前",
+    "namePlaceholder": "名前を入力してください",
+    "colorLabel": "プロフィールカラー",
+    "startButton": "ボールトを作成する",
+    "backButton": "戻る",
+    "nameError": "名前を入力してください",
+    "nameErrorShort": "名前は2文字以上である必要があります",
+    "yourVault": "あなたのボールト"
   }
 }

@@ -163,5 +163,26 @@
     "emptyDescription": "Adicione a sua primeira senha — será encriptada.",
     "noResultsTitle": "Sem resultados",
     "noResultsDescription": "Tente outro termo de pesquisa."
+  },
+  "Onboarding": {
+    "welcome": "Bem-vindo ao Passly",
+    "subtitle": "Suas senhas, criptografadas e locais. Para sempre.",
+    "featureLocal": "Completamente Local",
+    "featureLocalDesc": "Sem nuvem, sem servidores. Seus dados ficam no seu dispositivo.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Criptografia militar protege cada entrada.",
+    "featurePrivate": "Conhecimento Zero",
+    "featurePrivateDesc": "Sem conta necessária. Só você tem a chave.",
+    "getStarted": "Começar",
+    "createVault": "Crie seu Cofre",
+    "createVaultSubtitle": "Configure seu perfil para continuar",
+    "nameLabel": "Seu Nome",
+    "namePlaceholder": "Digite seu nome",
+    "colorLabel": "Cor do Perfil",
+    "startButton": "Criar meu Cofre",
+    "backButton": "Voltar",
+    "nameError": "Por favor, insira seu nome",
+    "nameErrorShort": "O nome deve ter pelo menos 2 caracteres",
+    "yourVault": "Seu Cofre"
   }
 }

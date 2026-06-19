@@ -163,5 +163,26 @@
     "emptyDescription": "添加您的第一个密码 — 它将被加密保存。",
     "noResultsTitle": "未找到结果",
     "noResultsDescription": "请尝试其他搜索词。"
+  },
+  "Onboarding": {
+    "welcome": "欢迎使用 Passly",
+    "subtitle": "您的密码，加密且本地存储。永远如此。",
+    "featureLocal": "完全本地",
+    "featureLocalDesc": "无云端，无服务器。您的数据保存在您的设备上。",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "军事级加密保护每一条记录。",
+    "featurePrivate": "零知识",
+    "featurePrivateDesc": "无需账户。只有您拥有密钥。",
+    "getStarted": "开始使用",
+    "createVault": "创建您的保险库",
+    "createVaultSubtitle": "设置您的个人资料以继续",
+    "nameLabel": "您的姓名",
+    "namePlaceholder": "请输入您的姓名",
+    "colorLabel": "个人资料颜色",
+    "startButton": "创建我的保险库",
+    "backButton": "返回",
+    "nameError": "请输入您的姓名",
+    "nameErrorShort": "姓名至少需要2个字符",
+    "yourVault": "您的保险库"
   }
 }

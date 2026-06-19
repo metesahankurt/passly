@@ -163,5 +163,26 @@
     "emptyDescription": "Ajoutez votre premier mot de passe — il sera chiffré.",
     "noResultsTitle": "Aucun résultat",
     "noResultsDescription": "Essayez un autre terme de recherche."
+  },
+  "Onboarding": {
+    "welcome": "Bienvenue sur Passly",
+    "subtitle": "Vos mots de passe, chiffrés et locaux. Pour toujours.",
+    "featureLocal": "Entièrement Local",
+    "featureLocalDesc": "Pas de cloud, pas de serveurs. Vos données restent sur votre appareil.",
+    "featureEncrypted": "AES-256-GCM",
+    "featureEncryptedDesc": "Un chiffrement militaire protège chaque entrée.",
+    "featurePrivate": "Connaissance Zéro",
+    "featurePrivateDesc": "Aucun compte requis. Vous seul avez la clé.",
+    "getStarted": "Commencer",
+    "createVault": "Créez votre Coffre",
+    "createVaultSubtitle": "Configurez votre profil pour continuer",
+    "nameLabel": "Votre Nom",
+    "namePlaceholder": "Entrez votre nom",
+    "colorLabel": "Couleur du Profil",
+    "startButton": "Créer mon Coffre",
+    "backButton": "Retour",
+    "nameError": "Veuillez entrer votre nom",
+    "nameErrorShort": "Le nom doit comporter au moins 2 caractères",
+    "yourVault": "Votre Coffre"
   }
 }

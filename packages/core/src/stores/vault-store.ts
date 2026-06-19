@@ -150,10 +150,10 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
     });
   },
 
-  exportVault() {
+  async exportVault() {
     const encrypted = loadEncryptedVault();
     if (!encrypted) return;
-    exportVaultFile(encrypted);
+    await exportVaultFile(encrypted);
     log().addActivity({
       type: "vault_exported",
       title: "Vault Dışa Aktarıldı",
