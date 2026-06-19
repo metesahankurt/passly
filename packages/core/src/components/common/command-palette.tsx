@@ -10,7 +10,9 @@ import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-s
 import { useHotkeysDialogStore } from "@workspace/core/stores/hotkeys-store";
 import { useSidebarStore } from "@workspace/core/stores/sidebar-store";
 import { useThemeStore } from "@workspace/core/stores/theme-store";
+import { useVaultStore } from "@workspace/core/stores/vault-store";
 import { useTranslations } from "@workspace/i18n";
+import { toast } from "sonner";
 import { localeConfig, routing } from "@workspace/i18n/routing";
 import {
   Command,
@@ -42,10 +44,12 @@ import { useIsMobile } from "@workspace/ui/hooks/use-mobile";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   Check,
+  Copy,
   CornerDownLeftIcon,
   FileText,
   Home,
   Keyboard,
+  KeyRound,
   LayoutDashboard,
   LayoutTemplate,
   LineChart,
@@ -88,6 +92,8 @@ export function CommandPalette({
 }) {
   const t = useTranslations("CommandPalette");
   const { isOpen, close } = useCommandPaletteStore();
+  const { vault } = useVaultStore();
+  const vaultEntries = vault?.entries ?? [];
   useDrawerHistory(isOpen, close);
   const isMobile = useIsMobile();
   const {
@@ -158,6 +164,36 @@ export function CommandPalette({
           <CommandEmpty className="py-12 text-center text-muted-foreground text-sm">
             {t("noResults")}
           </CommandEmpty>
+
+          {vaultEntries.length > 0 && (
+            <>
+              <CommandGroup className={groupClasses} heading="Şifreler">
+                {vaultEntries.map((entry) => (
+                  <CommandMenuItem
+                    key={entry.id}
+                    value={`${entry.title} ${entry.username} ${entry.url} ${entry.category}`}
+                    onSelect={() =>
+                      runCommand(() => {
+                        navigator.clipboard.writeText(entry.password);
+                        toast.success(`"${entry.title}" şifresi kopyalandı`);
+                      })
+                    }
+                  >
+                    <KeyRound className="text-primary" />
+                    <span className="flex-1">{entry.title}</span>
+                    {entry.username && (
+                      <span className="text-xs text-muted-foreground">{entry.username}</span>
+                    )}
+                    <CommandShortcut className="ml-2 flex items-center gap-1">
+                      <Copy className="size-3" />
+                      <span>Kopyala</span>
+                    </CommandShortcut>
+                  </CommandMenuItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator className="my-2" />
+            </>
+          )}
 
           <CommandGroup className={groupClasses} heading={t("general")}>
             <CommandMenuItem

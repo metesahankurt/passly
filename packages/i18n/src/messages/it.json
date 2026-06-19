@@ -71,7 +71,10 @@
     "billing": "Fatturazione",
     "notifications": "Notifiche",
     "logOut": "Esci",
-    "search": "Cerca..."
+    "search": "Cerca...",
+    "passwords": "Password",
+    "vault": "Caveau",
+    "onboarding": "Configurazione"
   },
   "HotkeysDialog": {
     "title": "Scorciatoie da Tastiera",
@@ -139,5 +142,26 @@
     "versionTitle": "Nuova versione",
     "versionDescription": "Controlla l'ultima versione per nuove funzionalità e miglioramenti.",
     "versionTime": "2 giorni fa"
+  },
+  "VaultPage": {
+    "createTitle": "Crea caveau",
+    "unlockTitle": "Sblocca caveau",
+    "createDescription": "Le password verranno crittografate con AES-256-GCM.",
+    "unlockDescription": "Inserisci la password principale per continuare.",
+    "masterPassword": "Password principale",
+    "confirmPassword": "Conferma password",
+    "createButton": "Crea caveau",
+    "unlockButton": "Sblocca",
+    "warning": "Se dimentichi la password principale, il caveau non può essere recuperato."
+  },
+  "PasswordsPage": {
+    "title": "Le mie password",
+    "subtitle": "voci · crittografate con AES-256-GCM",
+    "addButton": "Aggiungi",
+    "search": "Cerca per titolo, utente o URL…",
+    "emptyTitle": "Nessuna password salvata",
+    "emptyDescription": "Aggiungi la tua prima password — verrà crittografata.",
+    "noResultsTitle": "Nessun risultato",
+    "noResultsDescription": "Prova un termine di ricerca diverso."
   }
 }

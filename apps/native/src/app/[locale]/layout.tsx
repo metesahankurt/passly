@@ -1,6 +1,7 @@
 import { siteConfig } from "@workspace/core/config/site";
 import { themeInitScript } from "@workspace/core/scripts/theme-init";
 import { hasLocale, messages, NextIntlClientProvider } from "@workspace/i18n";
+import Script from "next/script";
 import { routing } from "@workspace/i18n/routing";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -50,17 +51,15 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning={true}>
-      <head>
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted script
-          dangerouslySetInnerHTML={{
-            __html: themeInitScript,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} overflow-hidden antialiased`}
       >
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted theme init script */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
         <NextIntlClientProvider
           locale={locale}
           messages={localeMessages}

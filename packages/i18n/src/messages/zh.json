@@ -71,7 +71,10 @@
     "billing": "账单",
     "notifications": "通知",
     "logOut": "退出登录",
-    "search": "搜索..."
+    "search": "搜索...",
+    "passwords": "密码",
+    "vault": "密码库",
+    "onboarding": "初始设置"
   },
   "HotkeysDialog": {
     "title": "键盘快捷键",
@@ -139,5 +142,26 @@
     "versionTitle": "新版本发布",
     "versionDescription": "检查最新版本以获取新功能和改进。",
     "versionTime": "2 天前"
+  },
+  "VaultPage": {
+    "createTitle": "创建密码库",
+    "unlockTitle": "解锁密码库",
+    "createDescription": "您的密码将使用 AES-256-GCM 加密。",
+    "unlockDescription": "输入主密码以继续。",
+    "masterPassword": "主密码",
+    "confirmPassword": "确认密码",
+    "createButton": "创建密码库",
+    "unlockButton": "解锁",
+    "warning": "如果忘记主密码，密码库将无法恢复。"
+  },
+  "PasswordsPage": {
+    "title": "我的密码",
+    "subtitle": "条目 · AES-256-GCM 加密",
+    "addButton": "添加",
+    "search": "按标题、用户名或URL搜索…",
+    "emptyTitle": "尚未保存任何密码",
+    "emptyDescription": "添加您的第一个密码 — 它将被加密保存。",
+    "noResultsTitle": "未找到结果",
+    "noResultsDescription": "请尝试其他搜索词。"
   }
 }

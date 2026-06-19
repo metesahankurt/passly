@@ -71,7 +71,10 @@
     "billing": "Facturación",
     "notifications": "Notificaciones",
     "logOut": "Cerrar sesión",
-    "search": "Buscar..."
+    "search": "Buscar...",
+    "passwords": "Contraseñas",
+    "vault": "Bóveda",
+    "onboarding": "Configuración"
   },
   "HotkeysDialog": {
     "title": "Atajos de Teclado",
@@ -139,5 +142,26 @@
     "versionTitle": "Nueva versión lanzada",
     "versionDescription": "Consulte la última versión para conocer las nuevas funciones y mejoras.",
     "versionTime": "hace 2 días"
+  },
+  "VaultPage": {
+    "createTitle": "Crear bóveda",
+    "unlockTitle": "Desbloquear bóveda",
+    "createDescription": "Sus contraseñas se cifrarán con AES-256-GCM.",
+    "unlockDescription": "Ingrese su contraseña maestra para continuar.",
+    "masterPassword": "Contraseña maestra",
+    "confirmPassword": "Confirmar contraseña",
+    "createButton": "Crear bóveda",
+    "unlockButton": "Desbloquear",
+    "warning": "Si olvida su contraseña maestra, la bóveda no se puede recuperar."
+  },
+  "PasswordsPage": {
+    "title": "Mis contraseñas",
+    "subtitle": "entradas · cifradas con AES-256-GCM",
+    "addButton": "Añadir",
+    "search": "Buscar por título, usuario o URL…",
+    "emptyTitle": "Aún no hay contraseñas guardadas",
+    "emptyDescription": "Añada su primera contraseña — se guardará cifrada.",
+    "noResultsTitle": "Sin resultados",
+    "noResultsDescription": "Pruebe con otro término de búsqueda."
   }
 }

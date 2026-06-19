@@ -71,7 +71,10 @@
     "billing": "Faturamento",
     "notifications": "Notificações",
     "logOut": "Sair",
-    "search": "Pesquisar..."
+    "search": "Pesquisar...",
+    "passwords": "Senhas",
+    "vault": "Cofre",
+    "onboarding": "Configuração"
   },
   "HotkeysDialog": {
     "title": "Atalhos de Teclado",
@@ -139,5 +142,26 @@
     "versionTitle": "Nova versão lançada",
     "versionDescription": "Verifique a versão mais recente para novos recursos e melhorias.",
     "versionTime": "2 dias atrás"
+  },
+  "VaultPage": {
+    "createTitle": "Criar cofre",
+    "unlockTitle": "Desbloquear cofre",
+    "createDescription": "As suas senhas serão encriptadas com AES-256-GCM.",
+    "unlockDescription": "Insira a sua senha mestra para continuar.",
+    "masterPassword": "Senha mestra",
+    "confirmPassword": "Confirmar senha",
+    "createButton": "Criar cofre",
+    "unlockButton": "Desbloquear",
+    "warning": "Se esquecer a sua senha mestra, o cofre não pode ser recuperado."
+  },
+  "PasswordsPage": {
+    "title": "Minhas senhas",
+    "subtitle": "entradas · encriptadas com AES-256-GCM",
+    "addButton": "Adicionar",
+    "search": "Pesquisar por título, utilizador ou URL…",
+    "emptyTitle": "Nenhuma senha guardada ainda",
+    "emptyDescription": "Adicione a sua primeira senha — será encriptada.",
+    "noResultsTitle": "Sem resultados",
+    "noResultsDescription": "Tente outro termo de pesquisa."
   }
 }

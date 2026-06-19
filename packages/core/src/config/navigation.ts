@@ -5,6 +5,7 @@ import {
   CreditCard,
   Github,
   Home,
+  KeyRound,
   LayoutDashboard,
   LogOut,
   type LucideIcon,
@@ -96,6 +97,14 @@ export const navigationData: NavigationData = {
       isActive: true,
       items: [],
       translationKey: "home",
+    },
+    {
+      title: "Passwords",
+      url: "/passwords",
+      icon: KeyRound,
+      isActive: true,
+      items: [],
+      translationKey: "passwords",
     },
     {
       title: "Dashboard",

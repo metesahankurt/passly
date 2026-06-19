@@ -3,7 +3,7 @@ const repoUrl = "https://github.com/metesahankurt/vault-app";
 const apiUrl = "https://api.github.com/repos/metesahankurt/vault-app";
 
 export const siteConfig = {
-  name: "VaultApp",
+  name: "Passly",
   owner: "metesahankurt",
   headline: "Build Cross-Platform Apps Faster Than Ever",
   description:

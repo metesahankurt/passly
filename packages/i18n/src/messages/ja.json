@@ -71,7 +71,10 @@
     "billing": "請求",
     "notifications": "通知",
     "logOut": "ログアウト",
-    "search": "検索..."
+    "search": "検索...",
+    "passwords": "パスワード",
+    "vault": "金庫",
+    "onboarding": "セットアップ"
   },
   "HotkeysDialog": {
     "title": "キーボードショートカット",
@@ -139,5 +142,26 @@
     "versionTitle": "新バージョンリリース",
     "versionDescription": "新機能と改善のための最新バージョンを確認してください。",
     "versionTime": "2日前"
+  },
+  "VaultPage": {
+    "createTitle": "金庫を作成",
+    "unlockTitle": "金庫を解錠",
+    "createDescription": "パスワードはAES-256-GCMで暗号化されます。",
+    "unlockDescription": "続けるにはマスターパスワードを入力してください。",
+    "masterPassword": "マスターパスワード",
+    "confirmPassword": "パスワードの確認",
+    "createButton": "金庫を作成",
+    "unlockButton": "解錠",
+    "warning": "マスターパスワードを忘れると金庫は復元できません。"
+  },
+  "PasswordsPage": {
+    "title": "マイパスワード",
+    "subtitle": "件 · AES-256-GCMで暗号化",
+    "addButton": "追加",
+    "search": "タイトル、ユーザー名またはURLで検索…",
+    "emptyTitle": "パスワードがまだ保存されていません",
+    "emptyDescription": "最初のパスワードを追加してください — 暗号化して保存されます。",
+    "noResultsTitle": "結果が見つかりません",
+    "noResultsDescription": "別の検索語を試してください。"
   }
 }

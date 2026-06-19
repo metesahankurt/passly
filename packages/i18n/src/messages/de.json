@@ -71,7 +71,10 @@
     "billing": "Abrechnung",
     "notifications": "Benachrichtigungen",
     "logOut": "Abmelden",
-    "search": "Suchen..."
+    "search": "Suchen...",
+    "passwords": "Passwörter",
+    "vault": "Tresor",
+    "onboarding": "Einrichtung"
   },
   "HotkeysDialog": {
     "title": "Tastaturkürzel",
@@ -139,5 +142,26 @@
     "versionTitle": "Neue Version veröffentlicht",
     "versionDescription": "Prüfen Sie die neueste Version auf neue Funktionen und Verbesserungen.",
     "versionTime": "vor 2 Tagen"
+  },
+  "VaultPage": {
+    "createTitle": "Tresor erstellen",
+    "unlockTitle": "Tresor entsperren",
+    "createDescription": "Ihre Passwörter werden mit AES-256-GCM verschlüsselt.",
+    "unlockDescription": "Geben Sie Ihr Hauptpasswort ein, um fortzufahren.",
+    "masterPassword": "Hauptpasswort",
+    "confirmPassword": "Passwort bestätigen",
+    "createButton": "Tresor erstellen",
+    "unlockButton": "Entsperren",
+    "warning": "Wenn Sie Ihr Hauptpasswort vergessen, kann der Tresor nicht wiederhergestellt werden."
+  },
+  "PasswordsPage": {
+    "title": "Meine Passwörter",
+    "subtitle": "Einträge · verschlüsselt mit AES-256-GCM",
+    "addButton": "Hinzufügen",
+    "search": "Nach Titel, Benutzername oder URL suchen…",
+    "emptyTitle": "Noch keine Passwörter gespeichert",
+    "emptyDescription": "Fügen Sie Ihr erstes Passwort hinzu — es wird verschlüsselt.",
+    "noResultsTitle": "Keine Ergebnisse gefunden",
+    "noResultsDescription": "Versuchen Sie einen anderen Suchbegriff."
   }
 }

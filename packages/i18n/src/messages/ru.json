@@ -71,7 +71,10 @@
     "billing": "Выставление счетов",
     "notifications": "Уведомления",
     "logOut": "Выйти",
-    "search": "Поиск..."
+    "search": "Поиск...",
+    "passwords": "Пароли",
+    "vault": "Хранилище",
+    "onboarding": "Настройка"
   },
   "HotkeysDialog": {
     "title": "Горячие клавиши",
@@ -139,5 +142,26 @@
     "versionTitle": "Новая версия",
     "versionDescription": "Проверьте последнюю версию на наличие новых функций и улучшений.",
     "versionTime": "2 дня назад"
+  },
+  "VaultPage": {
+    "createTitle": "Создать хранилище",
+    "unlockTitle": "Разблокировать хранилище",
+    "createDescription": "Ваши пароли будут зашифрованы с помощью AES-256-GCM.",
+    "unlockDescription": "Введите мастер-пароль для продолжения.",
+    "masterPassword": "Мастер-пароль",
+    "confirmPassword": "Подтвердить пароль",
+    "createButton": "Создать хранилище",
+    "unlockButton": "Разблокировать",
+    "warning": "Если вы забудете мастер-пароль, хранилище не может быть восстановлено."
+  },
+  "PasswordsPage": {
+    "title": "Мои пароли",
+    "subtitle": "записей · зашифровано AES-256-GCM",
+    "addButton": "Добавить",
+    "search": "Поиск по названию, пользователю или URL…",
+    "emptyTitle": "Паролей ещё нет",
+    "emptyDescription": "Добавьте первый пароль — он будет зашифрован.",
+    "noResultsTitle": "Результатов не найдено",
+    "noResultsDescription": "Попробуйте другой поисковый запрос."
   }
 }

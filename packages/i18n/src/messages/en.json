@@ -71,7 +71,31 @@
     "billing": "Billing",
     "notifications": "Notifications",
     "logOut": "Log out",
-    "search": "Search..."
+    "search": "Search...",
+    "passwords": "Passwords",
+    "vault": "Vault",
+    "onboarding": "Onboarding"
+  },
+  "VaultPage": {
+    "createTitle": "Create Vault",
+    "unlockTitle": "Unlock Vault",
+    "createDescription": "Your passwords will be encrypted with AES-256-GCM.",
+    "unlockDescription": "Enter your master password to continue.",
+    "masterPassword": "Master Password",
+    "confirmPassword": "Confirm Password",
+    "createButton": "Create Vault",
+    "unlockButton": "Unlock",
+    "warning": "If you forget your master password, the vault cannot be recovered."
+  },
+  "PasswordsPage": {
+    "title": "My Passwords",
+    "subtitle": "entries · encrypted with AES-256-GCM",
+    "addButton": "Add",
+    "search": "Search by title, username or URL…",
+    "emptyTitle": "No passwords saved yet",
+    "emptyDescription": "Add your first password — it will be encrypted.",
+    "noResultsTitle": "No results found",
+    "noResultsDescription": "Try a different search term."
   },
   "HotkeysDialog": {
     "title": "Keyboard Shortcuts",

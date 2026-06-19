@@ -1,21 +1,17 @@
 "use client";
 
-import { CommandPalette } from "@workspace/core/components/common/command-palette";
-import { HotkeysDialog } from "@workspace/core/components/common/hotkeys-dialog";
-import { ProfileDrawer } from "@workspace/core/components/common/profile-drawer";
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
-import { MobileBottomNav } from "@workspace/core/components/navigation/mobile-bottom-nav";
-import { navigationData } from "@workspace/core/config/navigation";
-import { useAppHotkeys } from "@workspace/core/hooks/use-app-hotkeys";
+import { CommandPalette } from "@workspace/core/components/common/command-palette";
 import { ThemeProvider } from "@workspace/core/providers/theme-provider";
+import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import {
   SidebarInset,
   SidebarProvider,
 } from "@workspace/ui/components/sidebar";
 import { Toaster } from "@workspace/ui/components/sonner";
 import { TooltipProvider } from "@workspace/ui/components/tooltip";
-import type { ComponentType, ReactNode } from "react";
+import { type ComponentType, type ReactNode, useEffect } from "react";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -31,8 +27,20 @@ interface AppLayoutProps {
   pathname: string;
 }
 
-function HotkeysRegistrar({ navigate }: { navigate: (path: string) => void }) {
-  useAppHotkeys({ navigate });
+function KeyboardShortcuts() {
+  const toggle = useCommandPaletteStore((s) => s.toggle);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        toggle();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [toggle]);
+
   return null;
 }
 
@@ -52,21 +60,14 @@ export function AppLayout({
     >
       <TooltipProvider>
         <SidebarProvider className="h-screen pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-          <HotkeysRegistrar navigate={navigate} />
           <AppSidebar LinkComponent={LinkComponent} pathname={pathname} />
           <SidebarInset>
             <AppHeader LinkComponent={LinkComponent} pathname={pathname} />
             {children}
             <Toaster />
-            <MobileBottomNav
-              items={navigationData.navMobile}
-              LinkComponent={LinkComponent}
-              pathname={pathname}
-            />
           </SidebarInset>
-          <HotkeysDialog />
           <CommandPalette navigate={navigate} />
-          <ProfileDrawer user={navigationData.user} />
+          <KeyboardShortcuts />
         </SidebarProvider>
       </TooltipProvider>
     </ThemeProvider>

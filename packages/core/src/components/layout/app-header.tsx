@@ -3,8 +3,8 @@
 import { LanguageToggle } from "@workspace/core/components/common/language-toggle";
 import { ModeToggle } from "@workspace/core/components/common/mode-toggle";
 import { NotificationCenter } from "@workspace/core/components/common/notification-center";
-import { navigationData } from "@workspace/core/config/navigation";
 import { formatHotkeyDisplay } from "@workspace/core/lib/utils";
+import { useMounted } from "@workspace/core/hooks/use-mounted";
 import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import { useTranslations } from "@workspace/i18n";
 import {
@@ -45,12 +45,9 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
     .split("/")
     .filter((s) => Boolean(s) && s !== "home");
   const t = useTranslations("Navigation");
-  const isHome = pathname === "/home" || pathname === "/";
-  const getBreadcrumbHref = (href: string) => {
-    const navItem = navigationData.navMain.find((item) => item.url === href);
-    return navItem?.href ?? href;
-  };
   const toggleCommandPalette = useCommandPaletteStore((s) => s.toggle);
+  const mounted = useMounted();
+  const modKey = mounted ? formatHotkeyDisplay("mod") : ["Ctrl"];
 
   return (
     <header className="hidden h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:flex">
@@ -63,33 +60,24 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
 
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              {isHome ? (
-                <BreadcrumbPage>{t("home")}</BreadcrumbPage>
-              ) : (
-                <LinkComponent href="/home">{t("home")}</LinkComponent>
-              )}
-            </BreadcrumbItem>
-
             {segments.map((segment, index) => {
               const href = `/${segments.slice(0, index + 1).join("/")}`;
-              const breadcrumbHref = getBreadcrumbHref(href);
               const isLast = index === segments.length - 1;
-              // Try to get translation, fallback to formatted segment
-              const displayText =
-                t(segment) === segment ? formatSegment(segment) : t(segment);
+              let displayText: string;
+              try {
+                displayText = t(segment);
+              } catch {
+                displayText = formatSegment(segment);
+              }
 
               return (
                 <Fragment key={href}>
-                  <BreadcrumbSeparator className="hidden md:block" />
+                  {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
                   <BreadcrumbItem>
                     {isLast ? (
                       <BreadcrumbPage>{displayText}</BreadcrumbPage>
                     ) : (
-                      <LinkComponent
-                        className="hidden md:block"
-                        href={breadcrumbHref}
-                      >
+                      <LinkComponent className="hidden md:block" href={href}>
                         {displayText}
                       </LinkComponent>
                     )}
@@ -114,7 +102,7 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
               </span>
             </span>
             <span className="flex items-center gap-1">
-              <Kbd>{formatHotkeyDisplay("mod")}</Kbd>
+              <Kbd>{modKey}</Kbd>
               <Kbd>K</Kbd>
             </span>
           </Button>

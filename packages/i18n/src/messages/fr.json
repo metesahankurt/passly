@@ -71,7 +71,10 @@
     "billing": "Facturation",
     "notifications": "Notifications",
     "logOut": "Se déconnecter",
-    "search": "Rechercher..."
+    "search": "Rechercher...",
+    "passwords": "Mots de passe",
+    "vault": "Coffre-fort",
+    "onboarding": "Configuration"
   },
   "HotkeysDialog": {
     "title": "Raccourcis Clavier",
@@ -139,5 +142,26 @@
     "versionTitle": "Nouvelle version",
     "versionDescription": "Consultez la dernière version pour découvrir de nouvelles fonctionnalités et améliorations.",
     "versionTime": "il y a 2 jours"
+  },
+  "VaultPage": {
+    "createTitle": "Créer un coffre",
+    "unlockTitle": "Déverrouiller le coffre",
+    "createDescription": "Vos mots de passe seront chiffrés avec AES-256-GCM.",
+    "unlockDescription": "Entrez votre mot de passe principal pour continuer.",
+    "masterPassword": "Mot de passe principal",
+    "confirmPassword": "Confirmer le mot de passe",
+    "createButton": "Créer le coffre",
+    "unlockButton": "Déverrouiller",
+    "warning": "Si vous oubliez votre mot de passe principal, le coffre ne peut pas être récupéré."
+  },
+  "PasswordsPage": {
+    "title": "Mes mots de passe",
+    "subtitle": "entrées · chiffrées avec AES-256-GCM",
+    "addButton": "Ajouter",
+    "search": "Rechercher par titre, utilisateur ou URL…",
+    "emptyTitle": "Aucun mot de passe enregistré",
+    "emptyDescription": "Ajoutez votre premier mot de passe — il sera chiffré.",
+    "noResultsTitle": "Aucun résultat",
+    "noResultsDescription": "Essayez un autre terme de recherche."
   }
 }

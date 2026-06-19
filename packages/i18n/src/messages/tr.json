@@ -71,7 +71,31 @@
     "billing": "Faturalama",
     "notifications": "Bildirimler",
     "logOut": "Çıkış Yap",
-    "search": "Ara..."
+    "search": "Ara...",
+    "passwords": "Şifreler",
+    "vault": "Şifre Kasası",
+    "onboarding": "Başlangıç"
+  },
+  "VaultPage": {
+    "createTitle": "Vault Oluştur",
+    "unlockTitle": "Vault'u Aç",
+    "createDescription": "Şifreleriniz AES-256-GCM ile şifrelenir.",
+    "unlockDescription": "Devam etmek için ana şifrenizi girin.",
+    "masterPassword": "Ana Şifre",
+    "confirmPassword": "Şifreyi Onayla",
+    "createButton": "Vault Oluştur",
+    "unlockButton": "Aç",
+    "warning": "Ana şifrenizi unutursanız vault kurtarılamaz."
+  },
+  "PasswordsPage": {
+    "title": "Şifrelerim",
+    "subtitle": "kayıt · AES-256-GCM ile şifreli",
+    "addButton": "Ekle",
+    "search": "Başlık, kullanıcı adı veya URL ara…",
+    "emptyTitle": "Henüz şifre eklenmedi",
+    "emptyDescription": "İlk şifrenizi ekleyin — şifreli olarak saklanacak.",
+    "noResultsTitle": "Sonuç bulunamadı",
+    "noResultsDescription": "Farklı bir arama terimi deneyin."
   },
   "HotkeysDialog": {
     "title": "Klavye Kısayolları",
