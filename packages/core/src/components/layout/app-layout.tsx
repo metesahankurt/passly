@@ -3,6 +3,7 @@
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
 import { CommandPalette } from "@workspace/core/components/common/command-palette";
+import { TitleBar } from "@workspace/core/components/layout/title-bar";
 import { ThemeProvider } from "@workspace/core/providers/theme-provider";
 import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import {
@@ -11,7 +12,7 @@ import {
 } from "@workspace/ui/components/sidebar";
 import { Toaster } from "@workspace/ui/components/sonner";
 import { TooltipProvider } from "@workspace/ui/components/tooltip";
-import { type ComponentType, type ReactNode, useEffect } from "react";
+import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -50,6 +51,12 @@ export function AppLayout({
   navigate,
   LinkComponent,
 }: AppLayoutProps) {
+  const [isTauri, setIsTauri] = useState(false);
+
+  useEffect(() => {
+    setIsTauri(typeof window !== "undefined" && "__TAURI_INTERNALS__" in window);
+  }, []);
+
   return (
     <ThemeProvider
       attribute="class"
@@ -59,7 +66,11 @@ export function AppLayout({
       enableSystem={true}
     >
       <TooltipProvider>
-        <SidebarProvider className="h-screen pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+        {isTauri && <TitleBar />}
+        <SidebarProvider
+          className="h-screen pb-[env(safe-area-inset-bottom)]"
+          style={{ paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)" }}
+        >
           <AppSidebar LinkComponent={LinkComponent} pathname={pathname} />
           <SidebarInset>
             <AppHeader LinkComponent={LinkComponent} pathname={pathname} />
