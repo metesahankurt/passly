@@ -12,6 +12,13 @@ import { useEffect, useState } from "react";
 import { cn } from "@workspace/ui/lib/utils";
 import { HardDrive, ShieldCheck, EyeOff, ArrowRight, Check } from "lucide-react";
 
+// "Continue" in each supported language — shown before the locale reloads
+const continueLabels: Record<string, string> = {
+  en: "Continue", tr: "Devam Et", de: "Weiter", es: "Continuar",
+  fr: "Continuer", it: "Continua", ja: "続ける", pt: "Continuar",
+  ru: "Продолжить", zh: "继续",
+};
+
 interface OnboardingPageProps {
   onComplete: () => void;
 }
@@ -77,11 +84,16 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
     { icon: EyeOff, title: t("featurePrivate"), desc: t("featurePrivateDesc"), color: "text-violet-500", bg: "bg-violet-500/10" },
   ];
 
+  const continueLabel = continueLabels[pendingLocale] ?? "Continue";
+
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background p-6">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden p-6"
+      style={{ background: "radial-gradient(ellipse at 50% 40%, hsl(var(--primary)/0.12) 0%, hsl(var(--background)) 70%)" }}
+    >
+      {/* Background glows */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/4 top-1/4 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
       </div>
 
       <div
@@ -165,7 +177,7 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
               }}
             >
               <Button className="w-full" size="lg" onClick={handleLanguageContinue}>
-                Continue
+                {continueLabel}
                 <ArrowRight className="ml-2 size-4" />
               </Button>
             </div>
