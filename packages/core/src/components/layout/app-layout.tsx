@@ -1,8 +1,8 @@
 "use client";
 
+import { CommandPalette } from "@workspace/core/components/common/command-palette";
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
-import { CommandPalette } from "@workspace/core/components/common/command-palette";
 import { TitleBar } from "@workspace/core/components/layout/title-bar";
 import { ThemeProvider } from "@workspace/core/providers/theme-provider";
 import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
@@ -54,7 +54,9 @@ export function AppLayout({
   const [isTauri, setIsTauri] = useState(false);
 
   useEffect(() => {
-    setIsTauri(typeof window !== "undefined" && "__TAURI_INTERNALS__" in window);
+    setIsTauri(
+      typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
+    );
   }, []);
 
   return (
@@ -68,10 +70,16 @@ export function AppLayout({
       <TooltipProvider>
         {isTauri && <TitleBar />}
         <SidebarProvider
-          className="h-screen pb-[env(safe-area-inset-bottom)]"
-          style={{ paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)" }}
+          className="h-screen overflow-hidden pb-[env(safe-area-inset-bottom)]"
+          style={{
+            paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)",
+          }}
         >
-          <AppSidebar LinkComponent={LinkComponent} pathname={pathname} />
+          <AppSidebar
+            className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
+            LinkComponent={LinkComponent}
+            pathname={pathname}
+          />
           <SidebarInset>
             <AppHeader LinkComponent={LinkComponent} pathname={pathname} />
             {children}

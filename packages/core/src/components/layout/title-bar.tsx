@@ -1,44 +1,61 @@
 "use client";
 
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, Square, X } from "lucide-react";
 
 export function TitleBar() {
-  const invoke = typeof window !== "undefined"
-    ? (window as any).__TAURI_INTERNALS__?.invoke
-    : null;
+  const appWindow = getCurrentWindow();
 
-  const minimize = () => invoke?.("plugin:window|minimize", { label: "main" });
-  const toggleMaximize = () => invoke?.("plugin:window|toggle_maximize", { label: "main" });
-  const close = () => invoke?.("plugin:window|close", { label: "main" });
+  const minimize = async () => {
+    await appWindow.minimize();
+  };
+
+  const toggleMaximize = async () => {
+    await appWindow.toggleMaximize();
+  };
+
+  const close = async () => {
+    await appWindow.close();
+  };
 
   return (
     <div
+      className="fixed top-0 right-0 left-0 z-50 flex h-8 select-none items-center border-sidebar-border border-b bg-sidebar"
       data-tauri-drag-region
-      className="fixed top-0 left-0 right-0 z-50 flex h-8 items-center bg-sidebar select-none border-b border-sidebar-border"
     >
-      <div className="flex-1" data-tauri-drag-region />
+      <div
+        className="flex h-8 w-12 items-center justify-center"
+        data-tauri-drag-region
+      >
+        <div
+          aria-hidden={true}
+          className="size-4 bg-center bg-contain bg-no-repeat"
+          style={{ backgroundImage: "url('/logo-light.png')" }}
+        />
+      </div>
+      <div className="h-8 flex-1" data-tauri-drag-region />
       <div className="flex items-center">
         <button
-          type="button"
-          onClick={minimize}
-          className="flex h-8 w-12 items-center justify-center text-muted-foreground hover:bg-sidebar-accent transition-colors"
           aria-label="Minimize"
+          className="flex h-8 w-12 items-center justify-center text-muted-foreground transition-colors hover:bg-sidebar-accent"
+          onClick={minimize}
+          type="button"
         >
           <Minus className="size-3.5" />
         </button>
         <button
-          type="button"
-          onClick={toggleMaximize}
-          className="flex h-8 w-12 items-center justify-center text-muted-foreground hover:bg-sidebar-accent transition-colors"
           aria-label="Maximize"
+          className="flex h-8 w-12 items-center justify-center text-muted-foreground transition-colors hover:bg-sidebar-accent"
+          onClick={toggleMaximize}
+          type="button"
         >
           <Square className="size-3" />
         </button>
         <button
-          type="button"
-          onClick={close}
-          className="flex h-8 w-12 items-center justify-center text-muted-foreground hover:bg-red-500 hover:text-white transition-colors"
           aria-label="Close"
+          className="flex h-8 w-12 items-center justify-center text-muted-foreground transition-colors hover:bg-red-500 hover:text-white"
+          onClick={close}
+          type="button"
         >
           <X className="size-3.5" />
         </button>
