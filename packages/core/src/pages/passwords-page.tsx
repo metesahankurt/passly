@@ -522,14 +522,20 @@ function PasswordCard({
         {entry.url && (
           <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
             <Link className="size-3.5 shrink-0 text-muted-foreground/60" />
-            <a
-              href={entry.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 truncate text-xs text-muted-foreground hover:text-primary hover:underline"
+            <button
+              type="button"
+              className="flex-1 truncate text-left text-xs text-muted-foreground hover:text-primary hover:underline"
+              onClick={() => {
+                const url = entry.url.startsWith("http") ? entry.url : `https://${entry.url}`;
+                if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
+                  import("@tauri-apps/plugin-opener").then(({ open }) => open(url));
+                } else {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
+              }}
             >
               {entry.url}
-            </a>
+            </button>
             <CopyButton value={entry.url} />
           </div>
         )}
