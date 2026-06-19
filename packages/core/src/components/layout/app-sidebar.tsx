@@ -78,9 +78,9 @@ export function AppSidebar({
             >
               <LinkComponent href="/passwords" onClick={handleLinkClick}>
                 <img
-                  src={resolvedTheme === "dark" ? "/logo-dark.png" : "/logo-light.png"}
+                  src="/logo-light.png"
                   alt="Passly"
-                  className="size-6 shrink-0 object-contain"
+                  className={`size-6 shrink-0 object-contain ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
                 />
                 <span className="font-semibold text-base">Passly</span>
               </LinkComponent>

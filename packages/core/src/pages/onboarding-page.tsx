@@ -42,9 +42,9 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 p-2">
             <img
-              src={resolvedTheme === "dark" ? "/logo-dark.png" : "/logo-light.png"}
+              src="/logo-light.png"
               alt="Passly"
-              className="size-full object-contain"
+              className={`size-full object-contain ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
             />
           </div>
           <div>
