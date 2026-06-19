@@ -1,6 +1,7 @@
 "use client";
 
 import { CommandPalette } from "@workspace/core/components/common/command-palette";
+import { DesktopUpdateDialog } from "@workspace/core/components/common/desktop-update-dialog";
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
 import { TitleBar } from "@workspace/core/components/layout/title-bar";
@@ -87,6 +88,7 @@ export function AppLayout({
           </SidebarInset>
           <CommandPalette navigate={navigate} />
           <KeyboardShortcuts />
+          {isTauri && <DesktopUpdateDialog />}
         </SidebarProvider>
       </TooltipProvider>
     </ThemeProvider>

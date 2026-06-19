@@ -1,8 +1,5 @@
 use serde::Serialize;
 
-#[cfg(desktop)]
-use tauri_plugin_updater::UpdaterExt;
-
 #[derive(Serialize)]
 struct GreetResponse {
     message_key: String,
@@ -20,25 +17,9 @@ fn greet(name: &str) -> GreetResponse {
     }
 }
 
-#[cfg(desktop)]
-fn check_for_updates(app: tauri::AppHandle) {
-    tauri::async_runtime::spawn(async move {
-        match app.updater() {
-            Ok(updater) => match updater.check().await {
-                Ok(Some(update)) => {
-                    if let Err(error) = update.download_and_install(|_, _| {}, || {}).await {
-                        eprintln!("failed to install update: {error}");
-                        return;
-                    }
-
-                    app.restart();
-                }
-                Ok(None) => {}
-                Err(error) => eprintln!("failed to check for updates: {error}"),
-            },
-            Err(error) => eprintln!("failed to initialize updater: {error}"),
-        }
-    });
+#[tauri::command]
+fn restart_app(app: tauri::AppHandle) {
+    app.restart();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -49,13 +30,12 @@ pub fn run() {
             {
                 app.handle()
                     .plugin(tauri_plugin_updater::Builder::new().build())?;
-                check_for_updates(app.handle().clone());
             }
 
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, restart_app])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
