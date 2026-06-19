@@ -2,9 +2,12 @@
 
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, Square, X } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export function TitleBar() {
+  const { resolvedTheme } = useTheme();
   const appWindow = getCurrentWindow();
+  const isDarkMode = resolvedTheme === "dark";
 
   const minimize = async () => {
     await appWindow.minimize();
@@ -29,7 +32,7 @@ export function TitleBar() {
       >
         <div
           aria-hidden={true}
-          className="size-4 bg-center bg-contain bg-no-repeat"
+          className={`size-4 bg-center bg-contain bg-no-repeat ${isDarkMode ? "brightness-0 invert" : ""}`}
           style={{ backgroundImage: "url('/logo-light.png')" }}
         />
       </div>
