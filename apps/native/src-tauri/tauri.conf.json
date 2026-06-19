@@ -29,6 +29,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",
@@ -43,6 +44,17 @@
     "windows": {
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMxRTNDQkM1OEI0RDA0QjIKUldTeUJFMkx4Y3ZqTVVJUDY4djhIczJETzZBZWxaN0tJS2FCNHU1dnRpOWp6U01TN2NCSzZuTVQK",
+      "endpoints": [
+        "https://github.com/metesahankurt/passly/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }
