@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="apps/native/public/logo-light.png#gh-light-mode-only" alt="Passly" width="200" />
-  <img src="apps/native/public/logo-dark.png#gh-dark-mode-only" alt="Passly" width="200" />
+  <img src="apps/native/public/logo.png" alt="Passly" width="120" />
 
   <h3>Passly</h3>
   <p>A local-first, open-source password manager for macOS and Windows.</p>
