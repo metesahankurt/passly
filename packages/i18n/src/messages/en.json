@@ -74,7 +74,14 @@
     "search": "Search...",
     "passwords": "Passwords",
     "vault": "Vault",
-    "onboarding": "Onboarding"
+    "onboarding": "Onboarding",
+    "categories": "Categories",
+    "all": "All",
+    "addCategory": "Add Category",
+    "categoryName": "Category name…",
+    "deleteCategory": "Delete",
+    "user": "User",
+    "localProfile": "Local Profile"
   },
   "VaultPage": {
     "createTitle": "Create Vault",

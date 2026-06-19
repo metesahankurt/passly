@@ -74,7 +74,14 @@
     "search": "Cerca...",
     "passwords": "Password",
     "vault": "Caveau",
-    "onboarding": "Configurazione"
+    "onboarding": "Configurazione",
+    "categories": "Categorie",
+    "all": "Tutti",
+    "addCategory": "Aggiungi categoria",
+    "categoryName": "Nome categoria…",
+    "deleteCategory": "Elimina",
+    "user": "Utente",
+    "localProfile": "Profilo locale"
   },
   "HotkeysDialog": {
     "title": "Scorciatoie da Tastiera",

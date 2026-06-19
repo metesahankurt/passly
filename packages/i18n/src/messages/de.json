@@ -74,7 +74,14 @@
     "search": "Suchen...",
     "passwords": "Passwörter",
     "vault": "Tresor",
-    "onboarding": "Einrichtung"
+    "onboarding": "Einrichtung",
+    "categories": "Kategorien",
+    "all": "Alle",
+    "addCategory": "Kategorie hinzufügen",
+    "categoryName": "Kategoriename…",
+    "deleteCategory": "Löschen",
+    "user": "Benutzer",
+    "localProfile": "Lokales Profil"
   },
   "HotkeysDialog": {
     "title": "Tastaturkürzel",

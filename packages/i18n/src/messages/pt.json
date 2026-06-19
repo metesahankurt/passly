@@ -74,7 +74,14 @@
     "search": "Pesquisar...",
     "passwords": "Senhas",
     "vault": "Cofre",
-    "onboarding": "Configuração"
+    "onboarding": "Configuração",
+    "categories": "Categorias",
+    "all": "Todas",
+    "addCategory": "Adicionar categoria",
+    "categoryName": "Nome da categoria…",
+    "deleteCategory": "Excluir",
+    "user": "Usuário",
+    "localProfile": "Perfil local"
   },
   "HotkeysDialog": {
     "title": "Atalhos de Teclado",

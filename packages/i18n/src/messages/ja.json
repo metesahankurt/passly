@@ -74,7 +74,14 @@
     "search": "検索...",
     "passwords": "パスワード",
     "vault": "金庫",
-    "onboarding": "セットアップ"
+    "onboarding": "セットアップ",
+    "categories": "カテゴリ",
+    "all": "すべて",
+    "addCategory": "カテゴリを追加",
+    "categoryName": "カテゴリ名…",
+    "deleteCategory": "削除",
+    "user": "ユーザー",
+    "localProfile": "ローカルプロフィール"
   },
   "HotkeysDialog": {
     "title": "キーボードショートカット",

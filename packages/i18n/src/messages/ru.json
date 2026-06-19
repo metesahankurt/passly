@@ -74,7 +74,14 @@
     "search": "Поиск...",
     "passwords": "Пароли",
     "vault": "Хранилище",
-    "onboarding": "Настройка"
+    "onboarding": "Настройка",
+    "categories": "Категории",
+    "all": "Все",
+    "addCategory": "Добавить категорию",
+    "categoryName": "Название категории…",
+    "deleteCategory": "Удалить",
+    "user": "Пользователь",
+    "localProfile": "Локальный профиль"
   },
   "HotkeysDialog": {
     "title": "Горячие клавиши",

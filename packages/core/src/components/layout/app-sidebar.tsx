@@ -1,22 +1,23 @@
 "use client";
 
+import { useMounted } from "@workspace/core/hooks/use-mounted";
 import { useCategoriesStore } from "@workspace/core/stores/categories-store";
 import { useProfileStore } from "@workspace/core/stores/profile-store";
-import { useMounted } from "@workspace/core/hooks/use-mounted";
 import { useSidebarStore } from "@workspace/core/stores/sidebar-store";
-import { cn } from "@workspace/ui/lib/utils";
+import { useTranslations } from "@workspace/i18n";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar";
-import { useTheme } from "next-themes";
 import { FolderOpen, KeyRound, Plus, X } from "lucide-react";
+import { useTheme } from "next-themes";
 import type * as React from "react";
 import type { ComponentType } from "react";
 import { useCallback, useState } from "react";
@@ -42,16 +43,24 @@ export function AppSidebar({
   const { variant } = useSidebarStore();
   const mounted = useMounted();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("Navigation");
 
   const { name, avatarColor } = useProfileStore();
-  const { categories, activeCategory, addCategory, removeCategory, setActiveCategory } =
-    useCategoriesStore();
+  const {
+    categories,
+    activeCategory,
+    addCategory,
+    removeCategory,
+    setActiveCategory,
+  } = useCategoriesStore();
 
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
 
   const handleLinkClick = useCallback(() => {
-    if (isMobile) setOpenMobile(false);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   }, [isMobile, setOpenMobile]);
 
   const handleAddCategory = () => {
@@ -63,9 +72,12 @@ export function AppSidebar({
   };
 
   const initials = name ? name.slice(0, 2).toUpperCase() : "?";
-  const isPasswordsActive = pathname === "/passwords" || pathname.startsWith("/passwords");
+  const isPasswordsActive =
+    pathname === "/passwords" || pathname.startsWith("/passwords");
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Sidebar collapsible="icon" variant={variant} {...props}>
@@ -77,12 +89,13 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <LinkComponent href="/passwords" onClick={handleLinkClick}>
-                <img
-                  src="/logo-light.png"
-                  alt="Passly"
-                  className={`size-6 shrink-0 object-contain ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
+                <span
+                  aria-label="Passly"
+                  className={`size-6 shrink-0 bg-center bg-contain bg-no-repeat ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
+                  role="img"
+                  style={{ backgroundImage: "url('/logo-light.png')" }}
                 />
-                <span className="font-semibold text-base truncate">
+                <span className="truncate font-semibold text-base">
                   {name ? `${name} Vault` : "Passly"}
                 </span>
               </LinkComponent>
@@ -97,62 +110,53 @@ export function AppSidebar({
             <SidebarMenuButton asChild={true} isActive={isPasswordsActive}>
               <LinkComponent href="/passwords" onClick={handleLinkClick}>
                 <KeyRound className="size-4" />
-                <span>Şifreler</span>
+                <span>{t("passwords")}</span>
               </LinkComponent>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
 
         <div className="px-4 py-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-            Kategoriler
+          <p className="font-semibold text-[11px] text-muted-foreground/60 uppercase tracking-wider">
+            {t("categories")}
           </p>
         </div>
 
         <SidebarMenu className="px-2">
           <SidebarMenuItem>
             <SidebarMenuButton
+              className="cursor-pointer"
               isActive={activeCategory === null}
               onClick={() => setActiveCategory(null)}
-              className="cursor-pointer"
             >
               <FolderOpen className="size-4" />
-              <span>Tümü</span>
+              <span>{t("all")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
 
           {categories.map((cat) => (
             <SidebarMenuItem key={cat}>
               <SidebarMenuButton
+                className="group/cat cursor-pointer"
                 isActive={activeCategory === cat}
                 onClick={() => setActiveCategory(cat)}
-                className="group/cat cursor-pointer"
               >
                 <FolderOpen className="size-4" />
                 <span className="flex-1 truncate">{cat}</span>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeCategory(cat);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.stopPropagation();
-                      removeCategory(cat);
-                    }
-                  }}
-                  className={cn(
-                    "ml-auto hidden size-4 items-center justify-center rounded text-muted-foreground",
-                    "opacity-0 transition-opacity hover:text-destructive",
-                    "group-hover/cat:flex group-hover/cat:opacity-100"
-                  )}
-                  title="Sil"
-                >
-                  <X className="size-3" />
-                </div>
               </SidebarMenuButton>
+              <SidebarMenuAction
+                aria-label={t("deleteCategory")}
+                className="text-muted-foreground hover:text-destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeCategory(cat);
+                }}
+                showOnHover={true}
+                title={t("deleteCategory")}
+                type="button"
+              >
+                <X className="size-3" />
+              </SidebarMenuAction>
             </SidebarMenuItem>
           ))}
 
@@ -161,29 +165,34 @@ export function AppSidebar({
               <div className="flex items-center gap-1 px-2 py-1">
                 <input
                   autoFocus
-                  value={newCategoryName}
+                  className="flex-1 rounded-md border bg-background px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-ring"
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddCategory();
+                    if (e.key === "Enter") {
+                      handleAddCategory();
+                    }
                     if (e.key === "Escape") {
                       setAddingCategory(false);
                       setNewCategoryName("");
                     }
                   }}
-                  placeholder="Kategori adı…"
-                  className="flex-1 rounded-md border bg-background px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-ring"
+                  placeholder={t("categoryName")}
+                  value={newCategoryName}
                 />
                 <button
-                  type="button"
-                  onClick={handleAddCategory}
                   className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                  onClick={handleAddCategory}
+                  type="button"
                 >
                   <Plus className="size-3" />
                 </button>
                 <button
-                  type="button"
-                  onClick={() => { setAddingCategory(false); setNewCategoryName(""); }}
                   className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                  onClick={() => {
+                    setAddingCategory(false);
+                    setNewCategoryName("");
+                  }}
+                  type="button"
                 >
                   <X className="size-3" />
                 </button>
@@ -192,11 +201,11 @@ export function AppSidebar({
           ) : (
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={() => setAddingCategory(true)}
                 className="cursor-pointer text-muted-foreground hover:text-foreground"
+                onClick={() => setAddingCategory(true)}
               >
                 <Plus className="size-4" />
-                <span className="text-xs">Kategori Ekle</span>
+                <span className="text-xs">{t("addCategory")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
@@ -206,16 +215,20 @@ export function AppSidebar({
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="cursor-default">
+            <SidebarMenuButton className="cursor-default" size="lg">
               <div
-                className="flex size-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
+                className="flex size-8 shrink-0 items-center justify-center rounded-lg font-bold text-sm text-white"
                 style={{ backgroundColor: avatarColor }}
               >
                 {initials}
               </div>
               <div className="grid flex-1 text-left text-sm">
-                <span className="truncate font-medium">{name || "Kullanıcı"}</span>
-                <span className="truncate text-xs text-muted-foreground">Yerel Profil</span>
+                <span className="truncate font-medium">
+                  {name || t("user")}
+                </span>
+                <span className="truncate text-muted-foreground text-xs">
+                  {t("localProfile")}
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

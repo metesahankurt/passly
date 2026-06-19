@@ -74,7 +74,14 @@
     "search": "Ara...",
     "passwords": "Şifreler",
     "vault": "Şifre Kasası",
-    "onboarding": "Başlangıç"
+    "onboarding": "Başlangıç",
+    "categories": "Kategoriler",
+    "all": "Tümü",
+    "addCategory": "Kategori Ekle",
+    "categoryName": "Kategori adı…",
+    "deleteCategory": "Sil",
+    "user": "Kullanıcı",
+    "localProfile": "Yerel Profil"
   },
   "VaultPage": {
     "createTitle": "Vault Oluştur",

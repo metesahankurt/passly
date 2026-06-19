@@ -74,7 +74,14 @@
     "search": "Rechercher...",
     "passwords": "Mots de passe",
     "vault": "Coffre-fort",
-    "onboarding": "Configuration"
+    "onboarding": "Configuration",
+    "categories": "Catégories",
+    "all": "Tout",
+    "addCategory": "Ajouter une catégorie",
+    "categoryName": "Nom de catégorie…",
+    "deleteCategory": "Supprimer",
+    "user": "Utilisateur",
+    "localProfile": "Profil local"
   },
   "HotkeysDialog": {
     "title": "Raccourcis Clavier",

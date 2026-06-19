@@ -74,7 +74,14 @@
     "search": "Buscar...",
     "passwords": "Contraseñas",
     "vault": "Bóveda",
-    "onboarding": "Configuración"
+    "onboarding": "Configuración",
+    "categories": "Categorías",
+    "all": "Todo",
+    "addCategory": "Añadir categoría",
+    "categoryName": "Nombre de categoría…",
+    "deleteCategory": "Eliminar",
+    "user": "Usuario",
+    "localProfile": "Perfil local"
   },
   "HotkeysDialog": {
     "title": "Atajos de Teclado",

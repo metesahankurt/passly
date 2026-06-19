@@ -74,7 +74,14 @@
     "search": "搜索...",
     "passwords": "密码",
     "vault": "密码库",
-    "onboarding": "初始设置"
+    "onboarding": "初始设置",
+    "categories": "分类",
+    "all": "全部",
+    "addCategory": "添加分类",
+    "categoryName": "分类名称…",
+    "deleteCategory": "删除",
+    "user": "用户",
+    "localProfile": "本地个人资料"
   },
   "HotkeysDialog": {
     "title": "键盘快捷键",

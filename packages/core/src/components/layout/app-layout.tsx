@@ -53,12 +53,29 @@ export function AppLayout({
   LinkComponent,
 }: AppLayoutProps) {
   const [isTauri, setIsTauri] = useState(false);
+  const isOnboarding = pathname === "/onboarding";
 
   useEffect(() => {
     setIsTauri(
       typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
     );
   }, []);
+
+  useEffect(() => {
+    if (!isTauri) {
+      return;
+    }
+
+    const preventContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+    };
+
+    document.addEventListener("contextmenu", preventContextMenu);
+
+    return () => {
+      document.removeEventListener("contextmenu", preventContextMenu);
+    };
+  }, [isTauri]);
 
   return (
     <ThemeProvider
@@ -70,26 +87,39 @@ export function AppLayout({
     >
       <TooltipProvider>
         {isTauri && <TitleBar />}
-        <SidebarProvider
-          className="h-screen overflow-hidden pb-[env(safe-area-inset-bottom)]"
-          style={{
-            paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)",
-          }}
-        >
-          <AppSidebar
-            className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
-            LinkComponent={LinkComponent}
-            pathname={pathname}
-          />
-          <SidebarInset>
-            <AppHeader LinkComponent={LinkComponent} pathname={pathname} />
+        {isOnboarding ? (
+          <main
+            className="h-screen overflow-hidden"
+            style={{
+              paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)",
+            }}
+          >
             {children}
             <Toaster />
-          </SidebarInset>
-          <CommandPalette navigate={navigate} />
-          <KeyboardShortcuts />
-          {isTauri && <DesktopUpdateDialog />}
-        </SidebarProvider>
+            {isTauri && <DesktopUpdateDialog />}
+          </main>
+        ) : (
+          <SidebarProvider
+            className="h-screen overflow-hidden pb-[env(safe-area-inset-bottom)]"
+            style={{
+              paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)",
+            }}
+          >
+            <AppSidebar
+              className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
+              LinkComponent={LinkComponent}
+              pathname={pathname}
+            />
+            <SidebarInset>
+              <AppHeader LinkComponent={LinkComponent} pathname={pathname} />
+              {children}
+              <Toaster />
+            </SidebarInset>
+            <CommandPalette navigate={navigate} />
+            <KeyboardShortcuts />
+            {isTauri && <DesktopUpdateDialog />}
+          </SidebarProvider>
+        )}
       </TooltipProvider>
     </ThemeProvider>
   );
