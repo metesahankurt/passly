@@ -528,7 +528,7 @@ function PasswordCard({
               onClick={() => {
                 const url = entry.url.startsWith("http") ? entry.url : `https://${entry.url}`;
                 if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
-                  import("@tauri-apps/plugin-opener").then(({ open }) => open(url));
+                  (window as any).__TAURI_INTERNALS__.invoke("plugin:opener|open_url", { url });
                 } else {
                   window.open(url, "_blank", "noopener,noreferrer");
                 }
