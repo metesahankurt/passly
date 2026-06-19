@@ -7,7 +7,7 @@ import { AVATAR_COLORS, type AvatarColor, useProfileStore } from "@workspace/cor
 import { useLanguageSwitcher } from "@workspace/core/hooks/use-language-switcher";
 import { localeConfig, routing } from "@workspace/i18n/routing";
 import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/i18n";
 import { useEffect, useState } from "react";
 import { cn } from "@workspace/ui/lib/utils";
 import { HardDrive, ShieldCheck, EyeOff, ArrowRight, Check } from "lucide-react";
