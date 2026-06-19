@@ -1,12 +1,12 @@
-name: VaultApp Release
+name: Release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version number (e.g. 1.0.0)"
+        description: "Version number (e.g. 0.1.0)"
         required: true
-        default: "1.0.0"
+        default: "0.1.0"
 
 permissions:
   contents: write
@@ -17,18 +17,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: macos-latest
-            args: "--target aarch64-apple-darwin"
-            arch: aarch64
-            os_name: mac-silicon
-          - platform: macos-latest
-            args: "--target x86_64-apple-darwin"
-            arch: x86_64
-            os_name: mac-intel
           - platform: windows-latest
             args: ""
-            arch: x86_64
-            os_name: windows
+          - platform: macos-latest
+            args: "--target aarch64-apple-darwin"
+          - platform: macos-latest
+            args: "--target x86_64-apple-darwin"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -43,7 +37,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && (matrix.arch == 'aarch64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin') || '' }}
+          targets: ${{ matrix.args != '' && (contains(matrix.args, 'aarch64') && 'aarch64-apple-darwin' || 'x86_64-apple-darwin') || '' }}
 
       - uses: swatinem/rust-cache@v2
         with:
@@ -52,26 +46,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build VaultApp
+      - name: Build
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: "v${{ inputs.version }}"
-          releaseName: "VaultApp v${{ inputs.version }}"
-          releaseBody: |
-            ## VaultApp v${{ inputs.version }}
-
-            ### İndirme
-            - **macOS (Apple Silicon / M1–M4):** `VaultApp_*_mac-silicon_aarch64.dmg`
-            - **macOS (Intel):** `VaultApp_*_mac-intel_x86_64.dmg`
-            - **Windows:** `VaultApp_*_windows_x86_64-setup.exe` veya `.msi`
-
-            ### Kurulum
-            - **macOS:** DMG dosyasını açın, VaultApp'i Applications'a sürükleyin
-            - **Windows:** `.exe` veya `.msi` dosyasını çalıştırın
-          releaseDraft: false
+          releaseName: "Passly v${{ inputs.version }}"
+          releaseDraft: true
           prerelease: false
           projectPath: apps/native
           args: ${{ matrix.args }}
-          assetNamePattern: "VaultApp_v${{ inputs.version }}_${{ matrix.os_name }}_[arch][ext]"
