@@ -1,13 +1,13 @@
-const siteUrl = "https://vault-app.dev";
-const repoUrl = "https://github.com/metesahankurt/vault-app";
-const apiUrl = "https://api.github.com/repos/metesahankurt/vault-app";
+const siteUrl = "https://github.com/metesahankurt/passly";
+const repoUrl = "https://github.com/metesahankurt/passly";
+const apiUrl = "https://api.github.com/repos/metesahankurt/passly";
 
 export const siteConfig = {
   name: "Passly",
   owner: "metesahankurt",
-  headline: "Build Cross-Platform Apps Faster Than Ever",
+  headline: "Şifrelerinizi güvenle saklayın",
   description:
-    "A production-grade starter template for building cross-platform apps. Write your code once and ship to Web, Desktop, and Mobile from a single codebase. Powered by Next.js and Tauri.",
+    "AES-256-GCM ile şifrelenmiş yerel şifre yöneticisi. Mac ve Windows için.",
   links: {
     website: siteUrl,
     github: repoUrl,
