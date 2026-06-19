@@ -55,8 +55,10 @@ jobs:
         with:
           tagName: "v${{ inputs.version }}"
           releaseName: "Passly v${{ inputs.version }}"
-          releaseDraft: true
+          assetNamePattern: "Passly_v${{ inputs.version }}_[platform]_[arch][ext]"
+          releaseDraft: false
           prerelease: false
           projectPath: apps/native
           args: ${{ matrix.args }}
+          includeRelease: true
           includeUpdaterJson: true

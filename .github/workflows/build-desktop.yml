@@ -15,6 +15,11 @@ on:
       build_linux:
         required: true
         type: boolean
+    secrets:
+      TAURI_SIGNING_PRIVATE_KEY:
+        required: true
+      TAURI_SIGNING_PRIVATE_KEY_PASSWORD:
+        required: false
 
 jobs:
   prepare-matrix:
