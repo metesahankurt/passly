@@ -81,7 +81,18 @@
     "categoryName": "Nome da categoria…",
     "deleteCategory": "Excluir",
     "user": "Usuário",
-    "localProfile": "Perfil local"
+    "localProfile": "Perfil local",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "Atalhos de Teclado",
@@ -191,5 +202,14 @@
     "nameError": "Por favor, insira seu nome",
     "nameErrorShort": "O nome deve ter pelo menos 2 caracteres",
     "yourVault": "Seu Cofre"
+  },
+  "ProfileCard": {
+    "title": "Perfil",
+    "description": "Atualize seu nome e cor do avatar",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Digite seu nome",
+    "colorLabel": "Cor do Avatar",
+    "saveButton": "Salvar",
+    "savedMessage": "Salvo!"
   }
 }

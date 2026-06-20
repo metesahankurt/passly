@@ -26,7 +26,6 @@ import {
   FolderOpen,
   Globe,
   KeyRound,
-  Link,
   Lock,
   Mail,
   NotebookText,
@@ -38,6 +37,7 @@ import {
   Upload,
   Wand2,
 } from "lucide-react";
+import { Textarea } from "@workspace/ui/components/textarea";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -425,13 +425,13 @@ function PasswordForm({
             Notlar
             <span className="ml-1.5 text-xs font-normal text-muted-foreground">opsiyonel</span>
           </Label>
-          <textarea
+          <Textarea
             id="f-notes"
             rows={3}
             placeholder="Kurtarma kodları, güvenlik soruları…"
             value={values.notes}
             onChange={set("notes")}
-            className="w-full rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+            className="resize-none"
           />
         </div>
 
@@ -464,88 +464,131 @@ function PasswordCard({
   onDelete: () => void;
 }) {
   const [visible, setVisible] = useState(false);
+  const [notesExpanded, setNotesExpanded] = useState(false);
+
+  const openUrl = () => {
+    const url = entry.url.startsWith("http") ? entry.url : `https://${entry.url}`;
+    if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
+      (window as any).__TAURI_INTERNALS__.invoke("plugin:opener|open_url", { url });
+    } else {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const displayUrl = entry.url
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "");
+
+  const notesIsLong =
+    entry.notes.split("\n").length > 2 || entry.notes.length > 90;
 
   return (
-    <div className="group relative flex flex-col rounded-xl border bg-card transition-all hover:shadow-sm">
-      <div className="flex items-center gap-3 border-b px-4 py-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+    <div className="group relative flex flex-col rounded-2xl border bg-card shadow-xs transition-all duration-200 hover:shadow-sm hover:border-border/80">
+
+      {/* ── Header ── */}
+      <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+        <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/15">
           <KeyRound className="size-4 text-primary" />
         </div>
-        <span className="flex-1 truncate font-semibold">{entry.title}</span>
-        {entry.category && (
-          <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-            {entry.category}
-          </span>
-        )}
-        <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-semibold text-[13.5px] leading-snug">
+            {entry.title}
+          </p>
+          {entry.category && (
+            <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+              {entry.category}
+            </span>
+          )}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             onClick={onEdit}
-            className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <Pencil className="size-3.5" />
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-px p-2">
+      <div className="mx-4 h-px bg-border/50" />
+
+      {/* ── Fields ── */}
+      <div className="flex flex-col gap-0.5 p-3">
         {entry.username && (
-          <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
-            <Mail className="size-3.5 shrink-0 text-muted-foreground/60" />
-            <span className="flex-1 truncate text-sm text-muted-foreground">{entry.username}</span>
+          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-muted/50">
+            <Mail className="size-3.5 shrink-0 text-muted-foreground/45" />
+            <span className="flex-1 truncate text-[13px] text-muted-foreground">
+              {entry.username}
+            </span>
             <CopyButton value={entry.username} />
           </div>
         )}
 
-        <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
-          <KeyRound className="size-3.5 shrink-0 text-muted-foreground/60" />
-          <span className="flex-1 truncate font-mono text-sm tracking-wider">
-            {visible ? entry.password : "•".repeat(Math.min(entry.password.length, 16))}
+        <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-muted/50">
+          <Lock className="size-3.5 shrink-0 text-muted-foreground/45" />
+          <span className="flex-1 truncate font-mono text-[13px] select-none" style={{ letterSpacing: "0.08em" }}>
+            {visible
+              ? entry.password
+              : "•".repeat(Math.min(entry.password.length, 14))}
           </span>
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:text-foreground"
           >
-            {visible ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+            {visible ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
           </button>
           <CopyButton value={entry.password} />
         </div>
 
         {entry.url && (
-          <div className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
-            <Link className="size-3.5 shrink-0 text-muted-foreground/60" />
+          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-muted/50">
+            <Globe className="size-3.5 shrink-0 text-muted-foreground/45" />
             <button
               type="button"
-              className="flex-1 truncate text-left text-xs text-muted-foreground hover:text-primary hover:underline"
-              onClick={() => {
-                const url = entry.url.startsWith("http") ? entry.url : `https://${entry.url}`;
-                if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
-                  (window as any).__TAURI_INTERNALS__.invoke("plugin:opener|open_url", { url });
-                } else {
-                  window.open(url, "_blank", "noopener,noreferrer");
-                }
-              }}
+              onClick={openUrl}
+              className="flex-1 truncate text-left text-[13px] text-muted-foreground transition-colors hover:text-primary"
             >
-              {entry.url}
+              {displayUrl}
             </button>
             <CopyButton value={entry.url} />
           </div>
         )}
 
         {entry.notes && (
-          <div className="mt-1 flex items-start gap-2 rounded-lg border-t px-2 pt-2.5 pb-1.5">
-            <NotebookText className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/60" />
-            <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap break-words">
-              {entry.notes}
-            </p>
+          <div className="mt-1.5 rounded-xl bg-muted/40 px-3 py-2.5">
+            <div className="flex gap-2">
+              <NotebookText className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/45" />
+              <div className="min-w-0 flex-1">
+                <p
+                  className={cn(
+                    "whitespace-pre-wrap break-words text-[12px] leading-relaxed text-muted-foreground",
+                    !notesExpanded && "line-clamp-2"
+                  )}
+                >
+                  {entry.notes}
+                </p>
+                {notesIsLong && (
+                  <button
+                    type="button"
+                    onClick={() => setNotesExpanded((v) => !v)}
+                    className="mt-1 text-[11px] text-primary/70 transition-colors hover:text-primary"
+                  >
+                    {notesExpanded ? "Daha az" : "Daha fazla"}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -1012,7 +1055,7 @@ export function PasswordsPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 items-start">
             {entries.map((entry) => (
               <PasswordCard
                 key={entry.id}

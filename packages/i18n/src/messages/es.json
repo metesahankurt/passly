@@ -81,7 +81,18 @@
     "categoryName": "Nombre de categoría…",
     "deleteCategory": "Eliminar",
     "user": "Usuario",
-    "localProfile": "Perfil local"
+    "localProfile": "Perfil local",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "Atajos de Teclado",
@@ -191,5 +202,14 @@
     "nameError": "Por favor ingrese su nombre",
     "nameErrorShort": "El nombre debe tener al menos 2 caracteres",
     "yourVault": "Su Bóveda"
+  },
+  "ProfileCard": {
+    "title": "Perfil",
+    "description": "Actualiza tu nombre y color de avatar",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Ingresa tu nombre",
+    "colorLabel": "Color de Avatar",
+    "saveButton": "Guardar",
+    "savedMessage": "¡Guardado!"
   }
 }

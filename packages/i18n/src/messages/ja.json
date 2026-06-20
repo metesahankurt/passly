@@ -81,7 +81,18 @@
     "categoryName": "カテゴリ名…",
     "deleteCategory": "削除",
     "user": "ユーザー",
-    "localProfile": "ローカルプロフィール"
+    "localProfile": "ローカルプロフィール",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "キーボードショートカット",
@@ -191,5 +202,14 @@
     "nameError": "名前を入力してください",
     "nameErrorShort": "名前は2文字以上である必要があります",
     "yourVault": "あなたのボールト"
+  },
+  "ProfileCard": {
+    "title": "プロフィール",
+    "description": "表示名とアバターカラーを更新",
+    "nameLabel": "名前",
+    "namePlaceholder": "名前を入力",
+    "colorLabel": "アバターカラー",
+    "saveButton": "保存",
+    "savedMessage": "保存しました！"
   }
 }

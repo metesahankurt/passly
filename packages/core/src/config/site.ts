@@ -11,9 +11,11 @@ export const siteConfig = {
   links: {
     website: siteUrl,
     github: repoUrl,
+    profile: `https://github.com/metesahankurt`,
     issues: `${repoUrl}/issues`,
     discussions: `${repoUrl}/discussions`,
-    releases: `${repoUrl}/releases/latest`,
+    releases: `${repoUrl}/releases`,
+    releasesLatest: `${repoUrl}/releases/latest`,
     license: `${repoUrl}/blob/master/LICENSE`,
     changelog: `${repoUrl}/blob/master/CHANGELOG.md`,
     contributing: `${repoUrl}/blob/master/CONTRIBUTING.md`,

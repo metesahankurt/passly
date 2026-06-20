@@ -46,13 +46,9 @@ import {
   Check,
   Copy,
   CornerDownLeftIcon,
-  FileText,
-  Home,
   Keyboard,
   KeyRound,
-  LayoutDashboard,
   LayoutTemplate,
-  LineChart,
   Moon,
   MoveDown,
   MoveUp,
@@ -60,7 +56,6 @@ import {
   PanelLeft,
   Settings,
   Sun,
-  View,
 } from "lucide-react";
 import React, { useCallback } from "react";
 
@@ -237,43 +232,6 @@ export function CommandPalette({
           <CommandSeparator className="my-2" />
 
           <CommandGroup className={groupClasses} heading={t("navigation")}>
-            <CommandMenuItem
-              onSelect={() => runCommand(() => navigate("/home"))}
-            >
-              <Home />
-              <span>{t("goHome")}</span>
-              {getKeysDisplay("go-home")}
-            </CommandMenuItem>
-            <CommandMenuItem
-              onSelect={() => runCommand(() => navigate("/dashboard/overview"))}
-            >
-              <LayoutDashboard />
-              <span>{t("goDashboard")}</span>
-              {getKeysDisplay("go-dashboard")}
-            </CommandMenuItem>
-            <CommandMenuItem
-              onSelect={() => runCommand(() => navigate("/dashboard/overview"))}
-            >
-              <View />
-              <span>{t("goOverview")}</span>
-              {getKeysDisplay("go-overview")}
-            </CommandMenuItem>
-            <CommandMenuItem
-              onSelect={() =>
-                runCommand(() => navigate("/dashboard/analytics"))
-              }
-            >
-              <LineChart />
-              <span>{t("goAnalytics")}</span>
-              {getKeysDisplay("go-analytics")}
-            </CommandMenuItem>
-            <CommandMenuItem
-              onSelect={() => runCommand(() => navigate("/dashboard/reports"))}
-            >
-              <FileText />
-              <span>{t("goReports")}</span>
-              {getKeysDisplay("go-reports")}
-            </CommandMenuItem>
             <CommandMenuItem
               onSelect={() => runCommand(() => navigate("/settings"))}
             >

@@ -53,7 +53,7 @@ export function AppLayout({
   LinkComponent,
 }: AppLayoutProps) {
   const [isTauri, setIsTauri] = useState(false);
-  const isOnboarding = pathname === "/onboarding";
+  const isOnboarding = pathname === "/onboarding" || pathname === "/" || !pathname;
 
   useEffect(() => {
     setIsTauri(

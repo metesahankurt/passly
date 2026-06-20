@@ -4,6 +4,8 @@ import { usePathname, useRouter } from "@workspace/i18n/navigation";
 import { localeConfig } from "@workspace/i18n/routing";
 import { useEffect, useTransition } from "react";
 
+const LOCALE_STORAGE_KEY = "passly-locale";
+
 export function useLanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
@@ -22,6 +24,9 @@ export function useLanguageSwitcher() {
   const changeLanguage = (newLocale: string) => {
     if (newLocale === locale || isPending) {
       return;
+    }
+    if (typeof window !== "undefined") {
+      localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
     }
     startTransition(() => {
       router.replace(pathname, { locale: newLocale });

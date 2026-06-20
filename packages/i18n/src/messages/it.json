@@ -81,7 +81,18 @@
     "categoryName": "Nome categoria…",
     "deleteCategory": "Elimina",
     "user": "Utente",
-    "localProfile": "Profilo locale"
+    "localProfile": "Profilo locale",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "Scorciatoie da Tastiera",
@@ -191,5 +202,14 @@
     "nameError": "Inserisci il tuo nome",
     "nameErrorShort": "Il nome deve avere almeno 2 caratteri",
     "yourVault": "Il tuo Vault"
+  },
+  "ProfileCard": {
+    "title": "Profilo",
+    "description": "Aggiorna il tuo nome e colore avatar",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Inserisci il tuo nome",
+    "colorLabel": "Colore Avatar",
+    "saveButton": "Salva",
+    "savedMessage": "Salvato!"
   }
 }

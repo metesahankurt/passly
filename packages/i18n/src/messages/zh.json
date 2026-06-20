@@ -81,7 +81,18 @@
     "categoryName": "分类名称…",
     "deleteCategory": "删除",
     "user": "用户",
-    "localProfile": "本地个人资料"
+    "localProfile": "本地个人资料",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "键盘快捷键",
@@ -191,5 +202,14 @@
     "nameError": "请输入您的姓名",
     "nameErrorShort": "姓名至少需要2个字符",
     "yourVault": "您的保险库"
+  },
+  "ProfileCard": {
+    "title": "个人资料",
+    "description": "更新您的显示名称和头像颜色",
+    "nameLabel": "姓名",
+    "namePlaceholder": "输入您的姓名",
+    "colorLabel": "头像颜色",
+    "saveButton": "保存",
+    "savedMessage": "已保存！"
   }
 }

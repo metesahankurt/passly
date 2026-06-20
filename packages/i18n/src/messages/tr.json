@@ -81,7 +81,18 @@
     "categoryName": "Kategori adı…",
     "deleteCategory": "Sil",
     "user": "Kullanıcı",
-    "localProfile": "Yerel Profil"
+    "localProfile": "Yerel Profil",
+    "deleteCategoryTitle": "Kategoriyi Sil",
+    "deleteCategoryDesc": "kategorisini silmek istediğinizden emin misiniz?",
+    "deleteCategoryWarning": "Bu işlem geri alınamaz.",
+    "deleteCategoryOnly": "Sadece Kategoriyi Sil",
+    "deleteCategoryOnlyDesc": "şifre kategorisiz olarak kalır",
+    "deleteCategoryOnlyDescEmpty": "Bu kategoride şifre yok, sadece etiket silinir",
+    "deleteCategoryWithAll": "Kategori ve Şifreleri Sil",
+    "deleteCategoryWithAllDesc": "şifre kalıcı olarak silinir",
+    "deleteCategoryWithAllDescEmpty": "Kategoride şifre yok, sadece etiket silinir",
+    "cancel": "İptal",
+    "latestUpdates": "Son Güncellemeler"
   },
   "VaultPage": {
     "createTitle": "Vault Oluştur",
@@ -191,5 +202,14 @@
     "nameError": "Lütfen adınızı girin",
     "nameErrorShort": "Ad en az 2 karakter olmalıdır",
     "yourVault": "Kasanız"
+  },
+  "ProfileCard": {
+    "title": "Profil",
+    "description": "Görünen adınızı ve avatar renginizi güncelleyin",
+    "nameLabel": "Ad",
+    "namePlaceholder": "Adınızı girin",
+    "colorLabel": "Avatar Rengi",
+    "saveButton": "Kaydet",
+    "savedMessage": "Kaydedildi!"
   }
 }

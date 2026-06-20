@@ -81,7 +81,18 @@
     "categoryName": "Category name…",
     "deleteCategory": "Delete",
     "user": "User",
-    "localProfile": "Local Profile"
+    "localProfile": "Local Profile",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "VaultPage": {
     "createTitle": "Create Vault",
@@ -191,5 +202,14 @@
     "nameError": "Please enter your name",
     "nameErrorShort": "Name must be at least 2 characters",
     "yourVault": "Your Vault"
+  },
+  "ProfileCard": {
+    "title": "Profile",
+    "description": "Update your display name and avatar color",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter your name",
+    "colorLabel": "Avatar Color",
+    "saveButton": "Save Changes",
+    "savedMessage": "Saved!"
   }
 }

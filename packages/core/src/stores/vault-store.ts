@@ -26,6 +26,8 @@ interface VaultState {
   bulkAddEntries(entries: Omit<VaultEntry, "id" | "createdAt" | "updatedAt">[]): Promise<void>;
   updateEntry(id: string, data: Partial<Omit<VaultEntry, "id" | "createdAt">>): Promise<void>;
   deleteEntry(id: string): Promise<void>;
+  deleteEntriesByCategory(category: string): Promise<void>;
+  clearCategoryFromEntries(category: string): Promise<void>;
   exportVault(): void;
   importVault(file: File, masterPassword: string): Promise<void>;
   resetVault(): void;
@@ -148,6 +150,34 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
       title: "Şifre Silindi",
       description: `"${targetTitle}" kalıcı olarak silindi.`,
     });
+  },
+
+  async deleteEntriesByCategory(category) {
+    const { vault, masterPassword } = get();
+    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
+    const removed = vault.entries.filter((e) => e.category === category).length;
+    const entries = vault.entries.filter((e) => e.category !== category);
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
+    log().addActivity({
+      type: "entry_deleted",
+      title: "Kategori ve Şifreler Silindi",
+      description: `"${category}" kategorisi ve ${removed} şifre kalıcı olarak silindi.`,
+    });
+  },
+
+  async clearCategoryFromEntries(category) {
+    const { vault, masterPassword } = get();
+    if (!vault || !masterPassword) return;
+    const entries = vault.entries.map((e) =>
+      e.category === category ? { ...e, category: "", updatedAt: Date.now() } : e
+    );
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
   },
 
   async exportVault() {

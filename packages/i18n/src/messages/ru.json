@@ -81,7 +81,18 @@
     "categoryName": "Название категории…",
     "deleteCategory": "Удалить",
     "user": "Пользователь",
-    "localProfile": "Локальный профиль"
+    "localProfile": "Локальный профиль",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "Горячие клавиши",
@@ -191,5 +202,14 @@
     "nameError": "Пожалуйста, введите ваше имя",
     "nameErrorShort": "Имя должно содержать не менее 2 символов",
     "yourVault": "Ваше Хранилище"
+  },
+  "ProfileCard": {
+    "title": "Профиль",
+    "description": "Обновите имя и цвет аватара",
+    "nameLabel": "Имя",
+    "namePlaceholder": "Введите имя",
+    "colorLabel": "Цвет аватара",
+    "saveButton": "Сохранить",
+    "savedMessage": "Сохранено!"
   }
 }

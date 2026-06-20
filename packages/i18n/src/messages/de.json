@@ -81,7 +81,18 @@
     "categoryName": "Kategoriename…",
     "deleteCategory": "Löschen",
     "user": "Benutzer",
-    "localProfile": "Lokales Profil"
+    "localProfile": "Lokales Profil",
+    "deleteCategoryTitle": "Delete Category",
+    "deleteCategoryDesc": "are you sure you want to delete the category?",
+    "deleteCategoryWarning": "This action cannot be undone.",
+    "deleteCategoryOnly": "Delete Category Only",
+    "deleteCategoryOnlyDesc": "passwords remain, their category tag is removed",
+    "deleteCategoryOnlyDescEmpty": "No passwords in this category, only the tag is removed",
+    "deleteCategoryWithAll": "Delete Category & All Passwords",
+    "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
+    "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
+    "cancel": "Cancel",
+    "latestUpdates": "Latest Updates"
   },
   "HotkeysDialog": {
     "title": "Tastaturkürzel",
@@ -191,5 +202,14 @@
     "nameError": "Bitte geben Sie Ihren Namen ein",
     "nameErrorShort": "Der Name muss mindestens 2 Zeichen lang sein",
     "yourVault": "Ihr Tresor"
+  },
+  "ProfileCard": {
+    "title": "Profil",
+    "description": "Zeigename und Avatar-Farbe aktualisieren",
+    "nameLabel": "Name",
+    "namePlaceholder": "Namen eingeben",
+    "colorLabel": "Avatar-Farbe",
+    "saveButton": "Speichern",
+    "savedMessage": "Gespeichert!"
   }
 }
