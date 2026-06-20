@@ -109,6 +109,7 @@ export function AppLayout({
               className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
               LinkComponent={LinkComponent}
               pathname={pathname}
+              navigate={navigate}
             />
             <SidebarInset>
               <AppHeader LinkComponent={LinkComponent} pathname={pathname} />

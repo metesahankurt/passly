@@ -43,11 +43,13 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
       }>
     | "a";
   pathname: string;
+  navigate?: (path: string) => void;
 }
 
 export function AppSidebar({
   pathname,
   LinkComponent = "a",
+  navigate,
   ...props
 }: AppSidebarProps) {
   const { isMobile, setOpenMobile } = useSidebar();
@@ -149,7 +151,11 @@ export function AppSidebar({
             <SidebarMenuButton
               className="cursor-pointer"
               isActive={activeCategory === null}
-              onClick={() => setActiveCategory(null)}
+              onClick={() => {
+                setActiveCategory(null);
+                if (!isPasswordsActive && navigate) navigate("/passwords");
+                handleLinkClick();
+              }}
             >
               <FolderOpen className="size-4" />
               <span>{t("all")}</span>
@@ -161,7 +167,11 @@ export function AppSidebar({
               <SidebarMenuButton
                 className="group/cat cursor-pointer"
                 isActive={activeCategory === cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  if (!isPasswordsActive && navigate) navigate("/passwords");
+                  handleLinkClick();
+                }}
               >
                 <FolderOpen className="size-4" />
                 <span className="flex-1 truncate">{cat}</span>
