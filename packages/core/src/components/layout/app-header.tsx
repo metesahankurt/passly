@@ -3,8 +3,8 @@
 import { LanguageToggle } from "@workspace/core/components/common/language-toggle";
 import { ModeToggle } from "@workspace/core/components/common/mode-toggle";
 import { NotificationCenter } from "@workspace/core/components/common/notification-center";
-import { formatHotkeyDisplay } from "@workspace/core/lib/utils";
 import { useMounted } from "@workspace/core/hooks/use-mounted";
+import { formatHotkeyDisplay } from "@workspace/core/lib/utils";
 import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import { useTranslations } from "@workspace/i18n";
 import {
@@ -45,7 +45,7 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
     .split("/")
     .filter((s) => Boolean(s) && s !== "home");
   const t = useTranslations("Navigation");
-  const toggleCommandPalette = useCommandPaletteStore((s) => s.toggle);
+  const openCommandPalette = useCommandPaletteStore((s) => s.open);
   const mounted = useMounted();
   const modKey = mounted ? formatHotkeyDisplay("mod") : ["Ctrl"];
 
@@ -72,7 +72,9 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
 
               return (
                 <Fragment key={href}>
-                  {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
+                  {index > 0 && (
+                    <BreadcrumbSeparator className="hidden md:block" />
+                  )}
                   <BreadcrumbItem>
                     {isLast ? (
                       <BreadcrumbPage>{displayText}</BreadcrumbPage>
@@ -91,8 +93,9 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
         <div className="ml-auto flex items-center gap-1">
           <Button
             className="hidden w-64 justify-between lg:flex"
-            onClick={toggleCommandPalette}
+            onClick={openCommandPalette}
             size="sm"
+            type="button"
             variant="outline"
           >
             <span className="flex items-center gap-2">
@@ -108,8 +111,9 @@ export function AppHeader({ pathname, LinkComponent = "a" }: AppHeaderProps) {
           </Button>
           <Button
             className="flex lg:hidden"
-            onClick={toggleCommandPalette}
+            onClick={openCommandPalette}
             size="icon"
+            type="button"
             variant="ghost"
           >
             <Search className="size-4" />

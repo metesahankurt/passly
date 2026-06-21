@@ -12,7 +12,6 @@ import { useSidebarStore } from "@workspace/core/stores/sidebar-store";
 import { useThemeStore } from "@workspace/core/stores/theme-store";
 import { useVaultStore } from "@workspace/core/stores/vault-store";
 import { useTranslations } from "@workspace/i18n";
-import { toast } from "sonner";
 import { localeConfig, routing } from "@workspace/i18n/routing";
 import {
   Command,
@@ -46,6 +45,7 @@ import {
   Check,
   Copy,
   CornerDownLeftIcon,
+  CreditCard,
   Keyboard,
   KeyRound,
   LayoutTemplate,
@@ -58,6 +58,7 @@ import {
   Sun,
 } from "lucide-react";
 import React, { useCallback } from "react";
+import { toast } from "sonner";
 
 function CommandMenuItem({
   children,
@@ -163,28 +164,55 @@ export function CommandPalette({
           {vaultEntries.length > 0 && (
             <>
               <CommandGroup className={groupClasses} heading="Şifreler">
-                {vaultEntries.map((entry) => (
-                  <CommandMenuItem
-                    key={entry.id}
-                    value={`${entry.title} ${entry.username} ${entry.url} ${entry.category}`}
-                    onSelect={() =>
-                      runCommand(() => {
-                        navigator.clipboard.writeText(entry.password);
-                        toast.success(`"${entry.title}" şifresi kopyalandı`);
-                      })
-                    }
-                  >
-                    <KeyRound className="text-primary" />
-                    <span className="flex-1">{entry.title}</span>
-                    {entry.username && (
-                      <span className="text-xs text-muted-foreground">{entry.username}</span>
-                    )}
-                    <CommandShortcut className="ml-2 flex items-center gap-1">
-                      <Copy className="size-3" />
-                      <span>Kopyala</span>
-                    </CommandShortcut>
-                  </CommandMenuItem>
-                ))}
+                {vaultEntries.map((entry) => {
+                  const isCard = entry.itemType === "card";
+                  const searchableValue = [
+                    entry.title,
+                    entry.username,
+                    entry.url,
+                    entry.category,
+                    entry.cardholderName,
+                    entry.cardNumber,
+                    entry.cardBrand,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+
+                  return (
+                    <CommandMenuItem
+                      key={entry.id}
+                      onSelect={() =>
+                        runCommand(() => {
+                          navigator.clipboard.writeText(
+                            isCard ? (entry.cardNumber ?? "") : entry.password
+                          );
+                          toast.success(
+                            isCard
+                              ? `"${entry.title}" kart numarası kopyalandı`
+                              : `"${entry.title}" şifresi kopyalandı`
+                          );
+                        })
+                      }
+                      value={searchableValue}
+                    >
+                      {isCard ? (
+                        <CreditCard className="text-primary" />
+                      ) : (
+                        <KeyRound className="text-primary" />
+                      )}
+                      <span className="flex-1">{entry.title}</span>
+                      {(entry.username || entry.cardholderName) && (
+                        <span className="text-muted-foreground text-xs">
+                          {entry.cardholderName ?? entry.username}
+                        </span>
+                      )}
+                      <CommandShortcut className="ml-2 flex items-center gap-1">
+                        <Copy className="size-3" />
+                        <span>Kopyala</span>
+                      </CommandShortcut>
+                    </CommandMenuItem>
+                  );
+                })}
               </CommandGroup>
               <CommandSeparator className="my-2" />
             </>
