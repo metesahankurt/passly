@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguageSwitcher } from "@workspace/core/hooks/use-language-switcher";
+import { useTheme } from "@workspace/core/providers/theme-provider";
 import {
   AVATAR_COLORS,
   type AvatarColor,
@@ -19,7 +20,6 @@ import {
   HardDrive,
   ShieldCheck,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 // "Continue" in each supported language — shown before the locale reloads

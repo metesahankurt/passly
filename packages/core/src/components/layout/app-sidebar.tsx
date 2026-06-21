@@ -1,11 +1,12 @@
 "use client";
 
+import { siteConfig } from "@workspace/core/config/site";
 import { useMounted } from "@workspace/core/hooks/use-mounted";
+import { useTheme } from "@workspace/core/providers/theme-provider";
 import { useCategoriesStore } from "@workspace/core/stores/categories-store";
 import { useProfileStore } from "@workspace/core/stores/profile-store";
 import { useSidebarStore } from "@workspace/core/stores/sidebar-store";
 import { useVaultStore } from "@workspace/core/stores/vault-store";
-import { siteConfig } from "@workspace/core/config/site";
 import { useTranslations } from "@workspace/i18n";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -28,7 +29,6 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar";
 import { ExternalLink, FolderOpen, Github, KeyRound, Plus, Tag, Trash2, X } from "lucide-react";
-import { useTheme } from "next-themes";
 import type * as React from "react";
 import type { ComponentType } from "react";
 import { useCallback, useState } from "react";

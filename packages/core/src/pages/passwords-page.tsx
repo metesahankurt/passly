@@ -32,6 +32,8 @@ import {
   FolderOpen,
   Globe,
   KeyRound,
+  LayoutGrid,
+  List,
   Lock,
   Mail,
   NotebookText,
@@ -65,6 +67,14 @@ type TauriWindow = Window &
   };
 
 type VaultItemType = "password" | "card";
+type ViewMode = "grid" | "compact" | "list";
+
+const VIEW_MODE_STORAGE_KEY = "passly:vault-view-mode";
+const VIEW_MODE_OPTIONS = [
+  { icon: LayoutGrid, label: "Grid", value: "grid" },
+  { icon: LayoutGrid, label: "Compact", value: "compact" },
+  { icon: List, label: "List", value: "list" },
+] as const;
 
 const CARD_BRANDS: Array<{
   cvcLength: number[];
@@ -1698,6 +1708,17 @@ export function PasswordsPage() {
   const { activeCategory, addCategory } = useCategoriesStore();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | VaultItemType>("all");
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") {
+      return "grid";
+    }
+    const storedViewMode = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    return storedViewMode === "grid" ||
+      storedViewMode === "compact" ||
+      storedViewMode === "list"
+      ? storedViewMode
+      : "grid";
+  });
   const [newItemType, setNewItemType] = useState<VaultItemType>("password");
   const [addOpen, setAddOpen] = useState(false);
   const [editEntry, setEditEntry] = useState<VaultEntry | null>(null);
@@ -1725,6 +1746,10 @@ export function PasswordsPage() {
     vault?.entries.filter((e) => getEntryType(e) === "password").length ?? 0;
   const cardCount =
     vault?.entries.filter((e) => getEntryType(e) === "card").length ?? 0;
+
+  useEffect(() => {
+    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, viewMode);
+  }, [viewMode]);
 
   const toggleSelected = (id: string) => {
     setSelectedIds((current) =>
@@ -1890,26 +1915,47 @@ export function PasswordsPage() {
 
       {/* Search */}
       <div className="space-y-3 border-b px-6 py-3">
-        <div className="flex flex-wrap gap-2">
-          {[
-            ["all", "Tümü"],
-            ["password", "Şifreler"],
-            ["card", "Kartlar"],
-          ].map(([value, label]) => (
-            <button
-              className={cn(
-                "rounded-md border px-3 py-1.5 font-medium text-sm transition-colors",
-                typeFilter === value
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-              key={value}
-              onClick={() => setTypeFilter(value as "all" | VaultItemType)}
-              type="button"
-            >
-              {label}
-            </button>
-          ))}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {[
+              ["all", "Tümü"],
+              ["password", "Şifreler"],
+              ["card", "Kartlar"],
+            ].map(([value, label]) => (
+              <button
+                className={cn(
+                  "rounded-md border px-3 py-1.5 font-medium text-sm transition-colors",
+                  typeFilter === value
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+                key={value}
+                onClick={() => setTypeFilter(value as "all" | VaultItemType)}
+                type="button"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="flex w-fit rounded-lg border bg-muted/40 p-1">
+            {VIEW_MODE_OPTIONS.map(({ icon: Icon, label, value }) => (
+              <button
+                className={cn(
+                  "flex h-8 items-center gap-1.5 rounded-md px-2.5 font-medium text-xs transition-colors",
+                  viewMode === value
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                key={value}
+                onClick={() => setViewMode(value)}
+                title={`${label} görünüm`}
+                type="button"
+              >
+                <Icon className="size-3.5" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="relative">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -1977,7 +2023,15 @@ export function PasswordsPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            className={cn(
+              "grid grid-cols-1 items-start",
+              viewMode === "grid" && "gap-4 sm:grid-cols-2 lg:grid-cols-3",
+              viewMode === "compact" &&
+                "gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5",
+              viewMode === "list" && "gap-3"
+            )}
+          >
             {entries.map((entry) =>
               getEntryType(entry) === "card" ? (
                 <PaymentCard

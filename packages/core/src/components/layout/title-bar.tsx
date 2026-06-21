@@ -1,8 +1,8 @@
 "use client";
 
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { useTheme } from "@workspace/core/providers/theme-provider";
 import { Minus, Square, X } from "lucide-react";
-import { useTheme } from "next-themes";
 
 export function TitleBar() {
   const { resolvedTheme } = useTheme();

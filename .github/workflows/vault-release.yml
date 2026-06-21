@@ -15,8 +15,11 @@ jobs:
   build:
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         include:
+          - platform: ubuntu-22.04
+            args: ""
           - platform: windows-latest
             args: ""
           - platform: macos-latest
@@ -27,6 +30,14 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: "v${{ inputs.version }}"
+
+      - name: Install OS deps
+        if: ${{ matrix.platform == 'ubuntu-22.04' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - uses: pnpm/action-setup@v4
 
