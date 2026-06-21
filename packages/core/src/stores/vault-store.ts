@@ -1,4 +1,9 @@
-import { decryptVault, encryptVault, type Vault, type VaultEntry } from "@workspace/core/lib/vault-crypto";
+import {
+  decryptVault,
+  encryptVault,
+  type Vault,
+  type VaultEntry,
+} from "@workspace/core/lib/vault-crypto";
 import {
   deleteEncryptedVault,
   exportVaultFile,
@@ -14,23 +19,32 @@ const log = useActivityStore.getState;
 type VaultStatus = "empty" | "locked" | "unlocked";
 
 interface VaultState {
-  status: VaultStatus;
-  vault: Vault | null;
-  masterPassword: string | null;
-
-  initialize(): void;
-  createVault(masterPassword: string): Promise<void>;
-  unlock(masterPassword: string): Promise<void>;
-  lock(): void;
-  addEntry(entry: Omit<VaultEntry, "id" | "createdAt" | "updatedAt">): Promise<void>;
-  bulkAddEntries(entries: Omit<VaultEntry, "id" | "createdAt" | "updatedAt">[]): Promise<void>;
-  updateEntry(id: string, data: Partial<Omit<VaultEntry, "id" | "createdAt">>): Promise<void>;
-  deleteEntry(id: string): Promise<void>;
-  deleteEntriesByCategory(category: string): Promise<void>;
+  addEntry(
+    entry: Omit<VaultEntry, "id" | "createdAt" | "updatedAt">
+  ): Promise<void>;
+  bulkAddEntries(
+    entries: Omit<VaultEntry, "id" | "createdAt" | "updatedAt">[]
+  ): Promise<void>;
   clearCategoryFromEntries(category: string): Promise<void>;
+  createVault(masterPassword: string): Promise<void>;
+  deleteEntries(ids: string[]): Promise<void>;
+  deleteEntriesByCategory(category: string): Promise<void>;
+  deleteEntry(id: string): Promise<void>;
   exportVault(): void;
   importVault(file: File, masterPassword: string): Promise<void>;
+
+  initialize(): void;
+  lock(): void;
+  masterPassword: string | null;
   resetVault(): void;
+  status: VaultStatus;
+  unlock(masterPassword: string): Promise<void>;
+  updateEntriesCategory(ids: string[], category: string): Promise<void>;
+  updateEntry(
+    id: string,
+    data: Partial<Omit<VaultEntry, "id" | "createdAt">>
+  ): Promise<void>;
+  vault: Vault | null;
 }
 
 export const useVaultStore = create<VaultState>()((set, get) => ({
@@ -39,7 +53,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
   masterPassword: null,
 
   initialize() {
-    if (get().status === "unlocked") return;
+    if (get().status === "unlocked") {
+      return;
+    }
     const encrypted = loadEncryptedVault();
     set({ status: encrypted ? "locked" : "empty" });
   },
@@ -58,7 +74,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async unlock(masterPassword) {
     const encrypted = loadEncryptedVault();
-    if (!encrypted) throw new Error("Vault bulunamadı.");
+    if (!encrypted) {
+      throw new Error("Vault bulunamadı.");
+    }
     const vault = await decryptVault(encrypted, masterPassword);
     set({ status: "unlocked", vault, masterPassword });
     log().addActivity({
@@ -79,7 +97,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async addEntry(entryData) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
     const entry: VaultEntry = {
       ...entryData,
       id: crypto.randomUUID(),
@@ -99,7 +119,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async bulkAddEntries(entriesData) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
     const now = Date.now();
     const newEntries = entriesData.map((data) => ({
       ...data,
@@ -107,7 +129,10 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
       createdAt: now,
       updatedAt: now,
     }));
-    const newVault: Vault = { ...vault, entries: [...newEntries, ...vault.entries] };
+    const newVault: Vault = {
+      ...vault,
+      entries: [...newEntries, ...vault.entries],
+    };
     const encrypted = await encryptVault(newVault, masterPassword);
     saveEncryptedVault(encrypted);
     set({ vault: newVault });
@@ -120,8 +145,11 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async updateEntry(id, data) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
-    const targetTitle = vault.entries.find((e) => e.id === id)?.title ?? "Bilinmeyen";
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
+    const targetTitle =
+      vault.entries.find((e) => e.id === id)?.title ?? "Bilinmeyen";
     const entries = vault.entries.map((e) =>
       e.id === id ? { ...e, ...data, updatedAt: Date.now() } : e
     );
@@ -138,8 +166,11 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async deleteEntry(id) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
-    const targetTitle = vault.entries.find((e) => e.id === id)?.title ?? "Bilinmeyen";
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
+    const targetTitle =
+      vault.entries.find((e) => e.id === id)?.title ?? "Bilinmeyen";
     const entries = vault.entries.filter((e) => e.id !== id);
     const newVault: Vault = { ...vault, entries };
     const encrypted = await encryptVault(newVault, masterPassword);
@@ -152,9 +183,50 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
     });
   },
 
+  async deleteEntries(ids) {
+    const { vault, masterPassword } = get();
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
+    const selected = new Set(ids);
+    const removed = vault.entries.filter((e) => selected.has(e.id)).length;
+    const entries = vault.entries.filter((e) => !selected.has(e.id));
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
+    log().addActivity({
+      type: "entry_deleted",
+      title: "Kayıtlar Silindi",
+      description: `${removed} kayıt kalıcı olarak silindi.`,
+    });
+  },
+
+  async updateEntriesCategory(ids, category) {
+    const { vault, masterPassword } = get();
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
+    const selected = new Set(ids);
+    const entries = vault.entries.map((e) =>
+      selected.has(e.id) ? { ...e, category, updatedAt: Date.now() } : e
+    );
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
+    log().addActivity({
+      type: "entry_updated",
+      title: "Kayıtlar Kategorilendi",
+      description: `${ids.length} kayıt "${category}" kategorisine taşındı.`,
+    });
+  },
+
   async deleteEntriesByCategory(category) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) throw new Error("Vault kilitli.");
+    if (!(vault && masterPassword)) {
+      throw new Error("Vault kilitli.");
+    }
     const removed = vault.entries.filter((e) => e.category === category).length;
     const entries = vault.entries.filter((e) => e.category !== category);
     const newVault: Vault = { ...vault, entries };
@@ -170,9 +242,13 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async clearCategoryFromEntries(category) {
     const { vault, masterPassword } = get();
-    if (!vault || !masterPassword) return;
+    if (!(vault && masterPassword)) {
+      return;
+    }
     const entries = vault.entries.map((e) =>
-      e.category === category ? { ...e, category: "", updatedAt: Date.now() } : e
+      e.category === category
+        ? { ...e, category: "", updatedAt: Date.now() }
+        : e
     );
     const newVault: Vault = { ...vault, entries };
     const encrypted = await encryptVault(newVault, masterPassword);
@@ -182,7 +258,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async exportVault() {
     const encrypted = loadEncryptedVault();
-    if (!encrypted) return;
+    if (!encrypted) {
+      return;
+    }
     await exportVaultFile(encrypted);
     log().addActivity({
       type: "vault_exported",

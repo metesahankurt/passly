@@ -4709,7 +4709,7 @@ dependencies = [
 
 [[package]]
 name = "vault_app"
-version = "0.1.6"
+version = "0.1.8"
 dependencies = [
  "serde",
  "serde_json",

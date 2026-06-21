@@ -3,27 +3,34 @@ const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
 
 export interface VaultEntry {
-  id: string;
-  title: string;
-  username: string;
-  password: string;
-  url: string;
-  notes: string;
+  cardBrand?: string;
+  cardholderName?: string;
+  cardNumber?: string;
   category: string;
   createdAt: number;
+  cvc?: string;
+  expiryMonth?: string;
+  expiryYear?: string;
+  id: string;
+  itemType?: "password" | "card";
+  notes: string;
+  password: string;
+  title: string;
   updatedAt: number;
+  url: string;
+  username: string;
 }
 
 export interface Vault {
-  version: 1;
   entries: VaultEntry[];
+  version: 1;
 }
 
 export interface EncryptedVault {
-  version: 1;
-  salt: string;
-  iv: string;
   data: string;
+  iv: string;
+  salt: string;
+  version: 1;
 }
 
 function toBase64(buf: ArrayBuffer): string {
