@@ -12,17 +12,21 @@ export type ActivityType =
   | "browser_imported";
 
 export interface ActivityEntry {
-  id: string;
-  type: ActivityType;
-  title: string;
   description: string;
-  timestamp: number;
+  id: string;
   read: boolean;
+  timestamp: number;
+  title: string;
+  type: ActivityType;
 }
 
 interface ActivityState {
   activities: ActivityEntry[];
-  addActivity(data: { type: ActivityType; title: string; description: string }): void;
+  addActivity(data: {
+    type: ActivityType;
+    title: string;
+    description: string;
+  }): void;
   markAllRead(): void;
   markRead(id: string): void;
 }
@@ -47,7 +51,9 @@ export const useActivityStore = create<ActivityState>()(
       },
 
       markAllRead() {
-        set({ activities: get().activities.map((a) => ({ ...a, read: true })) });
+        set({
+          activities: get().activities.map((a) => ({ ...a, read: true })),
+        });
       },
 
       markRead(id) {

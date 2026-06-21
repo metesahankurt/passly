@@ -12,8 +12,8 @@ export const AUTO_LOCK_OPTIONS = [
 ] as const;
 
 interface AutoLockState {
-  timeout: number;
   setTimeout(minutes: number): void;
+  timeout: number;
 }
 
 export const useAutoLockStore = create<AutoLockState>()(

@@ -3,7 +3,9 @@ import type { EncryptedVault } from "@workspace/core/lib/vault-crypto";
 const VAULT_KEY = "psv-vault";
 
 export function loadEncryptedVault(): EncryptedVault | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
   try {
     const item = localStorage.getItem(VAULT_KEY);
     return item ? (JSON.parse(item) as EncryptedVault) : null;
@@ -29,14 +31,21 @@ export async function exportVaultFile(vault: EncryptedVault): Promise<void> {
     try {
       const handle = await (window as any).showSaveFilePicker({
         suggestedName: filename,
-        types: [{ description: "Passly Vault", accept: { "application/json": [".psv"] } }],
+        types: [
+          {
+            description: "Passly Vault",
+            accept: { "application/json": [".psv"] },
+          },
+        ],
       });
       const writable = await handle.createWritable();
       await writable.write(content);
       await writable.close();
       return;
     } catch (err: any) {
-      if (err?.name === "AbortError") return;
+      if (err?.name === "AbortError") {
+        return;
+      }
     }
   }
 
@@ -58,7 +67,12 @@ export async function importVaultFile(file: File): Promise<EncryptedVault> {
     reader.onload = (e) => {
       try {
         const parsed = JSON.parse(e.target?.result as string);
-        if (parsed.version !== 1 || !parsed.salt || !parsed.iv || !parsed.data) {
+        if (
+          parsed.version !== 1 ||
+          !parsed.salt ||
+          !parsed.iv ||
+          !parsed.data
+        ) {
           reject(new Error("Geçersiz vault dosyası."));
           return;
         }

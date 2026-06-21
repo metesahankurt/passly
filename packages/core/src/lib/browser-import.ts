@@ -1,10 +1,10 @@
 export interface BrowserImportEntry {
-  title: string;
-  username: string;
-  password: string;
-  url: string;
-  notes: string;
   category: string;
+  notes: string;
+  password: string;
+  title: string;
+  url: string;
+  username: string;
 }
 
 // ── CSV Parser ──────────────────────────────────────────────────────────────
@@ -36,10 +36,15 @@ function parseCSVRow(line: string): string[] {
 
 function parseCSV(text: string): Record<string, string>[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
-  if (lines.length < 2) return [];
+  if (lines.length < 2) {
+    return [];
+  }
 
   const headers = parseCSVRow(lines[0] as string).map((h) =>
-    h.toLowerCase().replace(/[^a-z0-9_]/g, "_").trim()
+    h
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, "_")
+      .trim()
   );
 
   const rows: Record<string, string>[] = [];
@@ -66,28 +71,49 @@ function safeHostname(raw: string): string {
 // ── Format detection + mapping ──────────────────────────────────────────────
 
 type Format =
-  | "chrome"   // name, url, username, password
-  | "firefox"  // url, username, password, httprealm, …
-  | "safari"   // title, url, username, password, notes, otpauth
+  | "chrome" // name, url, username, password
+  | "firefox" // url, username, password, httprealm, …
+  | "safari" // title, url, username, password, notes, otpauth
   | "lastpass" // url, username, password, totp, extra, name, grouping, fav
-  | "bitwarden"// folder, …, name, login_uri, login_username, login_password, …
-  | "1password"// title, url, username, password, notes, type
-  | "keepass"  // account, login_name, password, web_site, comments
+  | "bitwarden" // folder, …, name, login_uri, login_username, login_password, …
+  | "1password" // title, url, username, password, notes, type
+  | "keepass" // account, login_name, password, web_site, comments
   | "generic";
 
 function detectFormat(headers: string[]): Format {
   const h = new Set(headers);
-  if (h.has("login_uri") || h.has("login_username") || h.has("login_password")) return "bitwarden";
-  if (h.has("grouping") && h.has("extra")) return "lastpass";
-  if (h.has("httprealm") || h.has("formactionorigin")) return "firefox";
-  if (h.has("otpauth")) return "safari";
-  if (h.has("account") || h.has("login_name")) return "keepass";
-  if (h.has("type") && h.has("title") && h.has("url")) return "1password";
-  if (h.has("name") && h.has("url") && h.has("username") && h.has("password")) return "chrome";
+  if (
+    h.has("login_uri") ||
+    h.has("login_username") ||
+    h.has("login_password")
+  ) {
+    return "bitwarden";
+  }
+  if (h.has("grouping") && h.has("extra")) {
+    return "lastpass";
+  }
+  if (h.has("httprealm") || h.has("formactionorigin")) {
+    return "firefox";
+  }
+  if (h.has("otpauth")) {
+    return "safari";
+  }
+  if (h.has("account") || h.has("login_name")) {
+    return "keepass";
+  }
+  if (h.has("type") && h.has("title") && h.has("url")) {
+    return "1password";
+  }
+  if (h.has("name") && h.has("url") && h.has("username") && h.has("password")) {
+    return "chrome";
+  }
   return "generic";
 }
 
-function mapRow(row: Record<string, string>, format: Format): BrowserImportEntry | null {
+function mapRow(
+  row: Record<string, string>,
+  format: Format
+): BrowserImportEntry | null {
   const g = (k: string) => row[k] ?? "";
 
   let title: string;
@@ -98,7 +124,9 @@ function mapRow(row: Record<string, string>, format: Format): BrowserImportEntry
 
   switch (format) {
     case "bitwarden":
-      if (g("type") && g("type") !== "login") return null;
+      if (g("type") && g("type") !== "login") {
+        return null;
+      }
       title = g("name");
       username = g("login_username");
       password = g("login_password");
@@ -150,19 +178,31 @@ function mapRow(row: Record<string, string>, format: Format): BrowserImportEntry
       break;
   }
 
-  if (!password) return null;
-  if (!title) title = safeHostname(url) || "İsimsiz";
+  if (!password) {
+    return null;
+  }
+  if (!title) {
+    title = safeHostname(url) || "İsimsiz";
+  }
 
   return { title, username, password, url, notes, category: "" };
 }
 
 // ── Public API ──────────────────────────────────────────────────────────────
 
-export type BrowserName = "Chrome" | "Firefox" | "Safari" | "Edge" | "Bitwarden" | "LastPass" | "1Password" | "Diğer";
+export type BrowserName =
+  | "Chrome"
+  | "Firefox"
+  | "Safari"
+  | "Edge"
+  | "Bitwarden"
+  | "LastPass"
+  | "1Password"
+  | "Diğer";
 
 export interface ParseResult {
-  entries: BrowserImportEntry[];
   detectedBrowser: BrowserName;
+  entries: BrowserImportEntry[];
   skipped: number;
 }
 

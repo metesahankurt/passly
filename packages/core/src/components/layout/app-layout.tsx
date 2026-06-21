@@ -59,7 +59,8 @@ export function AppLayout({
   LinkComponent,
 }: AppLayoutProps) {
   const [isTauri, setIsTauri] = useState(false);
-  const isOnboarding = pathname === "/onboarding" || pathname === "/" || !pathname;
+  const isOnboarding =
+    pathname === "/onboarding" || pathname === "/" || !pathname;
 
   useEffect(() => {
     setIsTauri(
@@ -114,8 +115,8 @@ export function AppLayout({
             <AppSidebar
               className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
               LinkComponent={LinkComponent}
-              pathname={pathname}
               navigate={navigate}
+              pathname={pathname}
             />
             <SidebarInset>
               <AppHeader LinkComponent={LinkComponent} pathname={pathname} />

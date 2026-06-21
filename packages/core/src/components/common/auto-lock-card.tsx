@@ -1,6 +1,9 @@
 "use client";
 
-import { AUTO_LOCK_OPTIONS, useAutoLockStore } from "@workspace/core/stores/auto-lock-store";
+import {
+  AUTO_LOCK_OPTIONS,
+  useAutoLockStore,
+} from "@workspace/core/stores/auto-lock-store";
 import { Lock } from "lucide-react";
 
 export function AutoLockCard() {

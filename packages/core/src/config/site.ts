@@ -11,7 +11,7 @@ export const siteConfig = {
   links: {
     website: siteUrl,
     github: repoUrl,
-    profile: `https://github.com/metesahankurt`,
+    profile: "https://github.com/metesahankurt",
     issues: `${repoUrl}/issues`,
     discussions: `${repoUrl}/discussions`,
     releases: `${repoUrl}/releases`,

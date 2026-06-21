@@ -4,13 +4,13 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export type SpecialFilter = "favorites" | "recent" | null;
 
 interface CategoriesState {
-  categories: string[];
   activeCategory: string | null;
-  specialFilter: SpecialFilter;
   addCategory(name: string): void;
+  categories: string[];
   removeCategory(name: string): void;
   setActiveCategory(name: string | null): void;
   setSpecialFilter(filter: SpecialFilter): void;
+  specialFilter: SpecialFilter;
 }
 
 export const useCategoriesStore = create<CategoriesState>()(
@@ -21,7 +21,9 @@ export const useCategoriesStore = create<CategoriesState>()(
       specialFilter: null,
       addCategory(name) {
         const trimmed = name.trim();
-        if (!trimmed) return;
+        if (!trimmed) {
+          return;
+        }
         set((s) => ({
           categories: s.categories.includes(trimmed)
             ? s.categories

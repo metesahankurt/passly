@@ -153,12 +153,18 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
     const targetTitle = existing?.title ?? "Bilinmeyen";
 
     let passwordHistory = existing?.passwordHistory ?? [];
-    if (data.password && data.password !== existing?.password && existing?.password) {
+    if (
+      data.password &&
+      data.password !== existing?.password &&
+      existing?.password
+    ) {
       passwordHistory = [existing.password, ...passwordHistory].slice(0, 10);
     }
 
     const entries = vault.entries.map((e) =>
-      e.id === id ? { ...e, ...data, passwordHistory, updatedAt: Date.now() } : e
+      e.id === id
+        ? { ...e, ...data, passwordHistory, updatedAt: Date.now() }
+        : e
     );
     const newVault: Vault = { ...vault, entries };
     const encrypted = await encryptVault(newVault, masterPassword);
@@ -173,7 +179,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async toggleFavorite(id) {
     const { vault, masterPassword } = get();
-    if (!(vault && masterPassword)) return;
+    if (!(vault && masterPassword)) {
+      return;
+    }
     const entries = vault.entries.map((e) =>
       e.id === id ? { ...e, isFavorite: !e.isFavorite } : e
     );
@@ -185,7 +193,9 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   async recordUsage(id) {
     const { vault, masterPassword } = get();
-    if (!(vault && masterPassword)) return;
+    if (!(vault && masterPassword)) {
+      return;
+    }
     const entries = vault.entries.map((e) =>
       e.id === id ? { ...e, lastUsed: Date.now() } : e
     );

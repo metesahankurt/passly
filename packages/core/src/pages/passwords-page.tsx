@@ -24,7 +24,6 @@ import { cn } from "@workspace/ui/lib/utils";
 import {
   Check,
   ChevronDown,
-  Clock,
   Copy,
   CreditCard,
   Download,
@@ -220,14 +219,15 @@ async function checkHibp(password: string): Promise<number> {
     .toUpperCase();
   const prefix = hashHex.slice(0, 5);
   const suffix = hashHex.slice(5);
-  const res = await fetch(
-    `https://api.pwnedpasswords.com/range/${prefix}`,
-    { headers: { "Add-Padding": "true" } }
-  );
+  const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`, {
+    headers: { "Add-Padding": "true" },
+  });
   const text = await res.text();
   for (const line of text.split("\r\n")) {
     const [s, c] = line.split(":");
-    if (s?.trim() === suffix) return Number.parseInt(c ?? "0", 10);
+    if (s?.trim() === suffix) {
+      return Number.parseInt(c ?? "0", 10);
+    }
   }
   return 0;
 }
@@ -245,7 +245,9 @@ function TagInput({
 
   const add = (raw: string) => {
     const tag = raw.trim().toLowerCase();
-    if (tag && !value.includes(tag)) onChange([...value, tag]);
+    if (tag && !value.includes(tag)) {
+      onChange([...value, tag]);
+    }
     setInput("");
   };
 
@@ -253,7 +255,7 @@ function TagInput({
     <div className="flex min-h-9 flex-wrap items-center gap-1.5 rounded-lg border bg-background px-2 py-1.5 focus-within:ring-2 focus-within:ring-ring/50">
       {value.map((tag) => (
         <span
-          className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary"
+          className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 font-medium text-[11px] text-primary"
           key={tag}
         >
           {tag}
@@ -824,7 +826,7 @@ function PasswordForm({
               type="button"
             >
               <History className="size-3.5 text-muted-foreground" />
-              <span className="flex-1 text-[12px] font-medium text-muted-foreground">
+              <span className="flex-1 font-medium text-[12px] text-muted-foreground">
                 Önceki Şifreler ({history.length})
               </span>
               <ChevronDown
@@ -1177,7 +1179,9 @@ function PasswordCard({
 }) {
   const [visible, setVisible] = useState(false);
   const [notesExpanded, setNotesExpanded] = useState(false);
-  const [hibp, setHibp] = useState<"idle" | "checking" | "safe" | number>("idle");
+  const [hibp, setHibp] = useState<"idle" | "checking" | "safe" | number>(
+    "idle"
+  );
 
   const openUrl = () => {
     const url = entry.url.startsWith("http")
@@ -1194,7 +1198,9 @@ function PasswordCard({
   };
 
   const handleHibpCheck = async () => {
-    if (hibp === "checking") return;
+    if (hibp === "checking") {
+      return;
+    }
     setHibp("checking");
     try {
       const count = await checkHibp(entry.password);
@@ -1241,7 +1247,12 @@ function PasswordCard({
               {entry.title}
             </p>
             {ageBadge && (
-              <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold", ageBadge.cls)}>
+              <span
+                className={cn(
+                  "shrink-0 rounded-full px-1.5 py-0.5 font-semibold text-[10px]",
+                  ageBadge.cls
+                )}
+              >
                 {ageBadge.label}
               </span>
             )}
@@ -1254,7 +1265,7 @@ function PasswordCard({
             )}
             {(entry.tags ?? []).map((tag) => (
               <span
-                className="inline-flex items-center gap-0.5 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                className="inline-flex items-center gap-0.5 rounded-full bg-muted px-2 py-0.5 font-medium text-[10px] text-muted-foreground"
                 key={tag}
               >
                 <Tag className="size-2.5" />
@@ -1270,13 +1281,15 @@ function PasswordCard({
               "flex size-7 items-center justify-center rounded-lg transition-colors",
               entry.isFavorite
                 ? "text-amber-400 hover:text-amber-500"
-                : "text-muted-foreground/30 opacity-0 transition-opacity group-hover:opacity-100 hover:text-amber-400"
+                : "text-muted-foreground/30 opacity-0 transition-opacity hover:text-amber-400 group-hover:opacity-100"
             )}
             onClick={onToggleFavorite}
             title={entry.isFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
             type="button"
           >
-            <Star className={cn("size-3.5", entry.isFavorite && "fill-current")} />
+            <Star
+              className={cn("size-3.5", entry.isFavorite && "fill-current")}
+            />
           </button>
           <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
@@ -1946,8 +1959,12 @@ export function PasswordsPage() {
   const { activeCategory, specialFilter, addCategory } = useCategoriesStore();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | VaultItemType>("all");
-  const [strengthFilter, setStrengthFilter] = useState<"all" | "weak" | "fair" | "strong">("all");
-  const [dateFilter, setDateFilter] = useState<"all" | "week" | "month" | "old">("all");
+  const [strengthFilter, setStrengthFilter] = useState<
+    "all" | "weak" | "fair" | "strong"
+  >("all");
+  const [dateFilter, setDateFilter] = useState<
+    "all" | "week" | "month" | "old"
+  >("all");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window === "undefined") {
@@ -1973,52 +1990,79 @@ export function PasswordsPage() {
 
   const allEntries = vault?.entries ?? [];
 
-  const recentEntries = specialFilter === "recent"
-    ? [...allEntries]
-        .filter((e) => e.lastUsed)
-        .sort((a, b) => (b.lastUsed ?? 0) - (a.lastUsed ?? 0))
-        .slice(0, 10)
-    : null;
+  const recentEntries =
+    specialFilter === "recent"
+      ? [...allEntries]
+          .filter((e) => e.lastUsed)
+          .sort((a, b) => (b.lastUsed ?? 0) - (a.lastUsed ?? 0))
+          .slice(0, 10)
+      : null;
 
   const now = Date.now();
   const MS_DAY = 86_400_000;
 
-  const entries = (specialFilter === "recent" ? (recentEntries ?? []) : allEntries).filter(
-    (e) => {
-      if (specialFilter === "favorites" && !e.isFavorite) return false;
-      if (specialFilter !== "recent" && activeCategory !== null && e.category !== activeCategory) return false;
-      if (typeFilter !== "all" && getEntryType(e) !== typeFilter) return false;
-
-      if (strengthFilter !== "all" && getEntryType(e) === "password") {
-        const bits = entropy(e.password);
-        if (strengthFilter === "weak" && bits >= 40) return false;
-        if (strengthFilter === "fair" && (bits < 40 || bits >= 70)) return false;
-        if (strengthFilter === "strong" && bits < 70) return false;
-      }
-
-      if (dateFilter !== "all") {
-        const age = now - e.updatedAt;
-        if (dateFilter === "week" && age > 7 * MS_DAY) return false;
-        if (dateFilter === "month" && age > 30 * MS_DAY) return false;
-        if (dateFilter === "old" && age <= 90 * MS_DAY) return false;
-      }
-
-      if (search === "") return true;
-      const q = search.toLowerCase();
-      return (
-        e.title.toLowerCase().includes(q) ||
-        e.username.toLowerCase().includes(q) ||
-        e.url.toLowerCase().includes(q) ||
-        (e.notes ?? "").toLowerCase().includes(q) ||
-        (e.tags ?? []).some((t) => t.includes(q)) ||
-        (e.cardholderName ?? "").toLowerCase().includes(q) ||
-        (e.cardNumber ?? "").includes(onlyDigits(search))
-      );
+  const entries = (
+    specialFilter === "recent" ? (recentEntries ?? []) : allEntries
+  ).filter((e) => {
+    if (specialFilter === "favorites" && !e.isFavorite) {
+      return false;
     }
-  );
+    if (
+      specialFilter !== "recent" &&
+      activeCategory !== null &&
+      e.category !== activeCategory
+    ) {
+      return false;
+    }
+    if (typeFilter !== "all" && getEntryType(e) !== typeFilter) {
+      return false;
+    }
+
+    if (strengthFilter !== "all" && getEntryType(e) === "password") {
+      const bits = entropy(e.password);
+      if (strengthFilter === "weak" && bits >= 40) {
+        return false;
+      }
+      if (strengthFilter === "fair" && (bits < 40 || bits >= 70)) {
+        return false;
+      }
+      if (strengthFilter === "strong" && bits < 70) {
+        return false;
+      }
+    }
+
+    if (dateFilter !== "all") {
+      const age = now - e.updatedAt;
+      if (dateFilter === "week" && age > 7 * MS_DAY) {
+        return false;
+      }
+      if (dateFilter === "month" && age > 30 * MS_DAY) {
+        return false;
+      }
+      if (dateFilter === "old" && age <= 90 * MS_DAY) {
+        return false;
+      }
+    }
+
+    if (search === "") {
+      return true;
+    }
+    const q = search.toLowerCase();
+    return (
+      e.title.toLowerCase().includes(q) ||
+      e.username.toLowerCase().includes(q) ||
+      e.url.toLowerCase().includes(q) ||
+      (e.notes ?? "").toLowerCase().includes(q) ||
+      (e.tags ?? []).some((t) => t.includes(q)) ||
+      (e.cardholderName ?? "").toLowerCase().includes(q) ||
+      (e.cardNumber ?? "").includes(onlyDigits(search))
+    );
+  });
 
   const selectionMode = selectionEnabled || selectedIds.length > 0;
-  const passwordCount = entries.filter((e) => getEntryType(e) === "password").length;
+  const passwordCount = entries.filter(
+    (e) => getEntryType(e) === "password"
+  ).length;
   const cardCount = entries.filter((e) => getEntryType(e) === "card").length;
 
   useEffect(() => {
@@ -2077,8 +2121,8 @@ export function PasswordsPage() {
                 : (activeCategory ?? "Şifrelerim")}
           </h1>
           <p className="text-muted-foreground text-xs">
-            {entries.length} kayıt · {passwordCount} şifre ·{" "}
-            {cardCount} kart · AES-256-GCM ile şifreli
+            {entries.length} kayıt · {passwordCount} şifre · {cardCount} kart ·
+            AES-256-GCM ile şifreli
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -2265,12 +2309,21 @@ export function PasswordsPage() {
         {showAdvanced && (
           <div className="flex flex-wrap gap-3 rounded-xl border bg-muted/30 px-4 py-3">
             <div className="flex flex-col gap-1.5">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Şifre Gücü</p>
+              <p className="font-semibold text-[11px] text-muted-foreground uppercase tracking-wide">
+                Şifre Gücü
+              </p>
               <div className="flex gap-1.5">
-                {([["all", "Tümü"], ["weak", "Zayıf"], ["fair", "Orta"], ["strong", "Güçlü"]] as const).map(([v, l]) => (
+                {(
+                  [
+                    ["all", "Tümü"],
+                    ["weak", "Zayıf"],
+                    ["fair", "Orta"],
+                    ["strong", "Güçlü"],
+                  ] as const
+                ).map(([v, l]) => (
                   <button
                     className={cn(
-                      "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                      "rounded-full border px-2.5 py-1 font-medium text-[11px] transition-colors",
                       strengthFilter === v
                         ? "border-primary bg-primary/10 text-primary"
                         : "bg-background text-muted-foreground hover:bg-muted"
@@ -2286,12 +2339,21 @@ export function PasswordsPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Son Güncelleme</p>
+              <p className="font-semibold text-[11px] text-muted-foreground uppercase tracking-wide">
+                Son Güncelleme
+              </p>
               <div className="flex gap-1.5">
-                {([["all", "Tümü"], ["week", "Bu hafta"], ["month", "Bu ay"], ["old", "90g+"]] as const).map(([v, l]) => (
+                {(
+                  [
+                    ["all", "Tümü"],
+                    ["week", "Bu hafta"],
+                    ["month", "Bu ay"],
+                    ["old", "90g+"],
+                  ] as const
+                ).map(([v, l]) => (
                   <button
                     className={cn(
-                      "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                      "rounded-full border px-2.5 py-1 font-medium text-[11px] transition-colors",
                       dateFilter === v
                         ? "border-primary bg-primary/10 text-primary"
                         : "bg-background text-muted-foreground hover:bg-muted"
@@ -2309,7 +2371,10 @@ export function PasswordsPage() {
             {(strengthFilter !== "all" || dateFilter !== "all") && (
               <button
                 className="self-end rounded-full border px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted"
-                onClick={() => { setStrengthFilter("all"); setDateFilter("all"); }}
+                onClick={() => {
+                  setStrengthFilter("all");
+                  setDateFilter("all");
+                }}
                 type="button"
               >
                 Filtreleri temizle
@@ -2412,8 +2477,8 @@ export function PasswordsPage() {
                   key={entry.id}
                   onDelete={() => setDeleteId(entry.id)}
                   onEdit={() => setEditEntry(entry)}
-                  onToggleFavorite={() => toggleFavorite(entry.id)}
                   onRecordUsage={() => recordUsage(entry.id)}
+                  onToggleFavorite={() => toggleFavorite(entry.id)}
                   onToggleSelected={() => toggleSelected(entry.id)}
                   selected={selectedIds.includes(entry.id)}
                   selectionMode={selectionMode}

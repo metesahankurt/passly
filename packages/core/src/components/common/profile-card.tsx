@@ -1,6 +1,9 @@
 "use client";
 
-import { AVATAR_COLORS, useProfileStore } from "@workspace/core/stores/profile-store";
+import {
+  AVATAR_COLORS,
+  useProfileStore,
+} from "@workspace/core/stores/profile-store";
 import { useTranslations } from "@workspace/i18n";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -25,7 +28,9 @@ export function ProfileCard() {
   const initials = editName ? editName.slice(0, 2).toUpperCase() : "?";
 
   const handleSave = () => {
-    if (!editName.trim()) return;
+    if (!editName.trim()) {
+      return;
+    }
     setProfile(editName.trim(), editColor);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -49,10 +54,14 @@ export function ProfileCard() {
             <Label htmlFor="profile-name">{t("nameLabel")}</Label>
             <Input
               id="profile-name"
+              onChange={(e) => setEditName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSave();
+                }
+              }}
               placeholder={t("namePlaceholder")}
               value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleSave(); }}
             />
           </div>
         </div>
@@ -62,11 +71,11 @@ export function ProfileCard() {
           <div className="flex flex-wrap gap-2">
             {AVATAR_COLORS.map((color) => (
               <button
-                key={color}
-                type="button"
-                onClick={() => setEditColor(color)}
                 className="relative flex size-8 items-center justify-center rounded-full transition-transform hover:scale-110"
+                key={color}
+                onClick={() => setEditColor(color)}
                 style={{ backgroundColor: color }}
+                type="button"
               >
                 {editColor === color && (
                   <Check className="size-4 text-white" strokeWidth={3} />
@@ -77,9 +86,9 @@ export function ProfileCard() {
         </div>
 
         <Button
-          onClick={handleSave}
-          disabled={!editName.trim() || saved}
           className="w-full sm:w-auto"
+          disabled={!editName.trim() || saved}
+          onClick={handleSave}
         >
           {saved ? (
             <span className="flex items-center gap-1.5">

@@ -25,6 +25,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@workspace/ui/components/tabs";
+import type { LucideIcon } from "lucide-react";
 import {
   Bell,
   Download,
@@ -37,7 +38,6 @@ import {
   Unlock,
   Upload,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 const ICONS: Record<ActivityType, LucideIcon> = {
   vault_created: ShieldCheck,
@@ -67,10 +67,18 @@ function formatRelativeTime(timestamp: number): string {
   const m = Math.floor(s / 60);
   const h = Math.floor(m / 60);
   const d = Math.floor(h / 24);
-  if (s < 60) return "Az önce";
-  if (m < 60) return `${m} dk önce`;
-  if (h < 24) return `${h} saat önce`;
-  if (d === 1) return "Dün";
+  if (s < 60) {
+    return "Az önce";
+  }
+  if (m < 60) {
+    return `${m} dk önce`;
+  }
+  if (h < 24) {
+    return `${h} saat önce`;
+  }
+  if (d === 1) {
+    return "Dün";
+  }
   return `${d} gün önce`;
 }
 
@@ -91,19 +99,19 @@ export function NotificationCenter() {
         >
           <Bell className="size-4" />
           {hasUnread && (
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-primary" />
+            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-primary" />
           )}
         </Button>
       </PopoverTrigger>
 
       <PopoverContent align="end" className="hidden w-96 gap-0 p-0 md:flex">
         <div className="flex items-center justify-between border-b p-4">
-          <span className="text-sm font-semibold">Bildirimler</span>
+          <span className="font-semibold text-sm">Bildirimler</span>
           {hasUnread && (
             <Button
               className="h-auto p-0 text-xs"
-              variant="link"
               onClick={markAllRead}
+              variant="link"
             >
               Tümünü okundu işaretle
             </Button>
@@ -117,7 +125,7 @@ export function NotificationCenter() {
               <TabsTrigger value="unread">
                 Okunmadı
                 {hasUnread && (
-                  <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                  <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 font-semibold text-[10px] text-primary-foreground">
                     {unread.length}
                   </span>
                 )}
@@ -157,7 +165,9 @@ function ActivityList({
             <Bell />
           </EmptyMedia>
           <EmptyTitle>Bildirim yok</EmptyTitle>
-          <EmptyDescription>Yapılan işlemler burada görünecek.</EmptyDescription>
+          <EmptyDescription>
+            Yapılan işlemler burada görünecek.
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -170,10 +180,10 @@ function ActivityList({
         const iconColor = TYPE_COLORS[item.type] ?? "text-muted-foreground";
         return (
           <button
-            key={item.id}
-            type="button"
-            onClick={() => onRead(item.id)}
             className="flex w-full items-start gap-3 rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
+            key={item.id}
+            onClick={() => onRead(item.id)}
+            type="button"
           >
             <div className="flex size-9 shrink-0 items-center justify-center rounded-full border bg-muted/40">
               <Icon className={`size-4 ${iconColor}`} />
@@ -185,13 +195,13 @@ function ActivityList({
               >
                 {item.title}
               </span>
-              <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+              <p className="line-clamp-2 text-muted-foreground text-xs leading-snug">
                 {item.description}
               </p>
             </div>
 
             <div className="flex shrink-0 flex-col items-end gap-2">
-              <span className="whitespace-nowrap text-xs text-muted-foreground">
+              <span className="whitespace-nowrap text-muted-foreground text-xs">
                 {formatRelativeTime(item.timestamp)}
               </span>
               {!item.read && (

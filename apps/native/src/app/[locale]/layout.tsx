@@ -1,11 +1,11 @@
 import { siteConfig } from "@workspace/core/config/site";
 import { themeInitScript } from "@workspace/core/scripts/theme-init";
 import { hasLocale, messages, NextIntlClientProvider } from "@workspace/i18n";
-import Script from "next/script";
 import { routing } from "@workspace/i18n/routing";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { AppLayout } from "./components/app-layout";
 import "@workspace/ui/globals.css";
 
@@ -56,9 +56,9 @@ export default async function RootLayout({
       >
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted theme init script */}
         <Script
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
           id="theme-init"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
         <NextIntlClientProvider
           locale={locale}

@@ -4,7 +4,13 @@ import { useAutoLockStore } from "@workspace/core/stores/auto-lock-store";
 import { useVaultStore } from "@workspace/core/stores/vault-store";
 import { useEffect, useRef } from "react";
 
-const ACTIVITY_EVENTS = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"] as const;
+const ACTIVITY_EVENTS = [
+  "mousemove",
+  "mousedown",
+  "keydown",
+  "touchstart",
+  "scroll",
+] as const;
 
 export function useAutoLock() {
   const timeout = useAutoLockStore((s) => s.timeout);
@@ -12,13 +18,20 @@ export function useAutoLock() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (status !== "unlocked" || timeout === 0) return;
+    if (status !== "unlocked" || timeout === 0) {
+      return;
+    }
 
     const reset = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        lock();
-      }, timeout * 60 * 1000);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(
+        () => {
+          lock();
+        },
+        timeout * 60 * 1000
+      );
     };
 
     reset();
@@ -27,7 +40,9 @@ export function useAutoLock() {
     }
 
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
       for (const event of ACTIVITY_EVENTS) {
         window.removeEventListener(event, reset);
       }
