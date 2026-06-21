@@ -12,9 +12,13 @@ export interface VaultEntry {
   expiryMonth?: string;
   expiryYear?: string;
   id: string;
+  isFavorite?: boolean;
   itemType?: "password" | "card";
+  lastUsed?: number;
   notes: string;
   password: string;
+  passwordHistory?: string[];
+  tags?: string[];
   title: string;
   updatedAt: number;
   url: string;

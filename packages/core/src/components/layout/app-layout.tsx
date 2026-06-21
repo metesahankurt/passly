@@ -5,6 +5,7 @@ import { DesktopUpdateDialog } from "@workspace/core/components/common/desktop-u
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
 import { TitleBar } from "@workspace/core/components/layout/title-bar";
+import { useAutoLock } from "@workspace/core/hooks/use-auto-lock";
 import { ThemeProvider } from "@workspace/core/providers/theme-provider";
 import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import {
@@ -43,6 +44,11 @@ function KeyboardShortcuts() {
     return () => document.removeEventListener("keydown", handler);
   }, [toggle]);
 
+  return null;
+}
+
+function AutoLockGuard() {
+  useAutoLock();
   return null;
 }
 
@@ -118,6 +124,7 @@ export function AppLayout({
             </SidebarInset>
             <CommandPalette navigate={navigate} />
             <KeyboardShortcuts />
+            <AutoLockGuard />
             {isTauri && <DesktopUpdateDialog />}
           </SidebarProvider>
         )}

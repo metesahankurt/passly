@@ -1,12 +1,16 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+export type SpecialFilter = "favorites" | "recent" | null;
+
 interface CategoriesState {
   categories: string[];
   activeCategory: string | null;
+  specialFilter: SpecialFilter;
   addCategory(name: string): void;
   removeCategory(name: string): void;
   setActiveCategory(name: string | null): void;
+  setSpecialFilter(filter: SpecialFilter): void;
 }
 
 export const useCategoriesStore = create<CategoriesState>()(
@@ -14,6 +18,7 @@ export const useCategoriesStore = create<CategoriesState>()(
     (set) => ({
       categories: [],
       activeCategory: null,
+      specialFilter: null,
       addCategory(name) {
         const trimmed = name.trim();
         if (!trimmed) return;
@@ -30,7 +35,10 @@ export const useCategoriesStore = create<CategoriesState>()(
         }));
       },
       setActiveCategory(name) {
-        set({ activeCategory: name });
+        set({ activeCategory: name, specialFilter: null });
+      },
+      setSpecialFilter(filter) {
+        set({ specialFilter: filter, activeCategory: null });
       },
     }),
     {

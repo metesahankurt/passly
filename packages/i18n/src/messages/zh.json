@@ -92,7 +92,10 @@
     "deleteCategoryWithAllDesc": "passwords will be permanently deleted",
     "deleteCategoryWithAllDescEmpty": "No passwords in this category, only the tag is removed",
     "cancel": "Cancel",
-    "latestUpdates": "Latest Updates"
+    "latestUpdates": "Latest Updates",
+    "favorites": "Favorites",
+    "recentlyUsed": "Recently Used",
+    "passwordHealth": "Password Health"
   },
   "HotkeysDialog": {
     "title": "键盘快捷键",

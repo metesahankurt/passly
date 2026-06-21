@@ -28,7 +28,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar";
-import { ExternalLink, FolderOpen, Github, KeyRound, Plus, Tag, Trash2, X } from "lucide-react";
+import { Clock, ExternalLink, FolderOpen, Github, KeyRound, Plus, ShieldCheck, Star, Tag, Trash2, X } from "lucide-react";
 import type * as React from "react";
 import type { ComponentType } from "react";
 import { useCallback, useState } from "react";
@@ -62,9 +62,11 @@ export function AppSidebar({
   const {
     categories,
     activeCategory,
+    specialFilter,
     addCategory,
     removeCategory,
     setActiveCategory,
+    setSpecialFilter,
   } = useCategoriesStore();
   const { deleteEntriesByCategory, clearCategoryFromEntries, vault } = useVaultStore();
 
@@ -131,10 +133,47 @@ export function AppSidebar({
       <SidebarContent className="gap-0">
         <SidebarMenu className="px-2 py-1">
           <SidebarMenuItem>
-            <SidebarMenuButton asChild={true} isActive={isPasswordsActive}>
-              <LinkComponent href="/passwords" onClick={handleLinkClick}>
+            <SidebarMenuButton asChild={true} isActive={isPasswordsActive && !specialFilter}>
+              <LinkComponent href="/passwords" onClick={() => { setSpecialFilter(null); handleLinkClick(); }}>
                 <KeyRound className="size-4" />
                 <span>{t("passwords")}</span>
+              </LinkComponent>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={specialFilter === "favorites"}
+              onClick={() => {
+                setSpecialFilter("favorites");
+                if (!isPasswordsActive && navigate) navigate("/passwords");
+                handleLinkClick();
+              }}
+            >
+              <Star className="size-4" />
+              <span>{t("favorites")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={specialFilter === "recent"}
+              onClick={() => {
+                setSpecialFilter("recent");
+                if (!isPasswordsActive && navigate) navigate("/passwords");
+                handleLinkClick();
+              }}
+            >
+              <Clock className="size-4" />
+              <span>{t("recentlyUsed")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild={true}
+              isActive={pathname === "/health" || pathname.startsWith("/health")}
+            >
+              <LinkComponent href="/health" onClick={handleLinkClick}>
+                <ShieldCheck className="size-4" />
+                <span>{t("passwordHealth")}</span>
               </LinkComponent>
             </SidebarMenuButton>
           </SidebarMenuItem>

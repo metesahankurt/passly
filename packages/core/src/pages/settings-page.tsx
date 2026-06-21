@@ -1,5 +1,6 @@
 "use client";
 
+import { AutoLockCard } from "@workspace/core/components/common/auto-lock-card";
 import { LanguageCard } from "@workspace/core/components/common/language-card";
 import { ModeCard } from "@workspace/core/components/common/mode-card";
 import { ProfileCard } from "@workspace/core/components/common/profile-card";
@@ -12,6 +13,7 @@ export function SettingsPage() {
     <ScrollArea className="w-full overflow-y-auto">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4 pb-28 md:pb-4">
         <ProfileCard />
+        <AutoLockCard />
         <LanguageCard />
         <ModeCard />
         <div className="hidden md:block">

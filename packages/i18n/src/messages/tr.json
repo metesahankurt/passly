@@ -92,7 +92,10 @@
     "deleteCategoryWithAllDesc": "şifre kalıcı olarak silinir",
     "deleteCategoryWithAllDescEmpty": "Kategoride şifre yok, sadece etiket silinir",
     "cancel": "İptal",
-    "latestUpdates": "Son Güncellemeler"
+    "latestUpdates": "Son Güncellemeler",
+    "favorites": "Favoriler",
+    "recentlyUsed": "Son Kullanılanlar",
+    "passwordHealth": "Şifre Sağlığı"
   },
   "VaultPage": {
     "createTitle": "Vault Oluştur",

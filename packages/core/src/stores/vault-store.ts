@@ -32,12 +32,13 @@ interface VaultState {
   deleteEntry(id: string): Promise<void>;
   exportVault(): void;
   importVault(file: File, masterPassword: string): Promise<void>;
-
   initialize(): void;
   lock(): void;
   masterPassword: string | null;
+  recordUsage(id: string): Promise<void>;
   resetVault(): void;
   status: VaultStatus;
+  toggleFavorite(id: string): Promise<void>;
   unlock(masterPassword: string): Promise<void>;
   updateEntriesCategory(ids: string[], category: string): Promise<void>;
   updateEntry(
@@ -148,10 +149,16 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
     if (!(vault && masterPassword)) {
       throw new Error("Vault kilitli.");
     }
-    const targetTitle =
-      vault.entries.find((e) => e.id === id)?.title ?? "Bilinmeyen";
+    const existing = vault.entries.find((e) => e.id === id);
+    const targetTitle = existing?.title ?? "Bilinmeyen";
+
+    let passwordHistory = existing?.passwordHistory ?? [];
+    if (data.password && data.password !== existing?.password && existing?.password) {
+      passwordHistory = [existing.password, ...passwordHistory].slice(0, 10);
+    }
+
     const entries = vault.entries.map((e) =>
-      e.id === id ? { ...e, ...data, updatedAt: Date.now() } : e
+      e.id === id ? { ...e, ...data, passwordHistory, updatedAt: Date.now() } : e
     );
     const newVault: Vault = { ...vault, entries };
     const encrypted = await encryptVault(newVault, masterPassword);
@@ -162,6 +169,30 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
       title: "Şifre Güncellendi",
       description: `"${targetTitle}" başarıyla düzenlendi.`,
     });
+  },
+
+  async toggleFavorite(id) {
+    const { vault, masterPassword } = get();
+    if (!(vault && masterPassword)) return;
+    const entries = vault.entries.map((e) =>
+      e.id === id ? { ...e, isFavorite: !e.isFavorite } : e
+    );
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
+  },
+
+  async recordUsage(id) {
+    const { vault, masterPassword } = get();
+    if (!(vault && masterPassword)) return;
+    const entries = vault.entries.map((e) =>
+      e.id === id ? { ...e, lastUsed: Date.now() } : e
+    );
+    const newVault: Vault = { ...vault, entries };
+    const encrypted = await encryptVault(newVault, masterPassword);
+    saveEncryptedVault(encrypted);
+    set({ vault: newVault });
   },
 
   async deleteEntry(id) {

@@ -24,6 +24,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import {
   Check,
   ChevronDown,
+  Clock,
   Copy,
   CreditCard,
   Download,
@@ -31,6 +32,7 @@ import {
   EyeOff,
   FolderOpen,
   Globe,
+  History,
   KeyRound,
   LayoutGrid,
   List,
@@ -41,9 +43,15 @@ import {
   Plus,
   RefreshCw,
   Search,
+  ShieldAlert,
+  ShieldCheck,
+  SlidersHorizontal,
+  Star,
+  Tag,
   Trash2,
   Upload,
   Wand2,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -197,6 +205,85 @@ function strengthLabel(bits: number): {
     return { label: "İyi", color: "bg-lime-500", width: "w-[75%]" };
   }
   return { label: "Güçlü", color: "bg-emerald-500", width: "w-full" };
+}
+
+// ─── HIBP ────────────────────────────────────────────────────────────────────
+
+async function checkHibp(password: string): Promise<number> {
+  const hashBuf = await crypto.subtle.digest(
+    "SHA-1",
+    new TextEncoder().encode(password)
+  );
+  const hashHex = Array.from(new Uint8Array(hashBuf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
+  const prefix = hashHex.slice(0, 5);
+  const suffix = hashHex.slice(5);
+  const res = await fetch(
+    `https://api.pwnedpasswords.com/range/${prefix}`,
+    { headers: { "Add-Padding": "true" } }
+  );
+  const text = await res.text();
+  for (const line of text.split("\r\n")) {
+    const [s, c] = line.split(":");
+    if (s?.trim() === suffix) return Number.parseInt(c ?? "0", 10);
+  }
+  return 0;
+}
+
+// ─── Tag Input ───────────────────────────────────────────────────────────────
+
+function TagInput({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (tags: string[]) => void;
+}) {
+  const [input, setInput] = useState("");
+
+  const add = (raw: string) => {
+    const tag = raw.trim().toLowerCase();
+    if (tag && !value.includes(tag)) onChange([...value, tag]);
+    setInput("");
+  };
+
+  return (
+    <div className="flex min-h-9 flex-wrap items-center gap-1.5 rounded-lg border bg-background px-2 py-1.5 focus-within:ring-2 focus-within:ring-ring/50">
+      {value.map((tag) => (
+        <span
+          className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary"
+          key={tag}
+        >
+          {tag}
+          <button
+            className="hover:text-destructive"
+            onClick={() => onChange(value.filter((t) => t !== tag))}
+            type="button"
+          >
+            <X className="size-2.5" />
+          </button>
+        </span>
+      ))}
+      <input
+        className="min-w-16 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        onBlur={() => input && add(input)}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            add(input);
+          }
+          if (e.key === "Backspace" && !input && value.length > 0) {
+            onChange(value.slice(0, -1));
+          }
+        }}
+        placeholder={value.length === 0 ? "Etiket ekle, Enter ile onayla…" : ""}
+        value={input}
+      />
+    </div>
+  );
 }
 
 function OptionPill({
@@ -491,11 +578,12 @@ function CategoryCombobox({
   );
 }
 
-function CopyButton({ value }: { value: string }) {
+function CopyButton({ value, onCopy }: { value: string; onCopy?: () => void }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = async () => {
     await navigator.clipboard.writeText(value);
     setCopied(true);
+    onCopy?.();
     setTimeout(() => setCopied(false), 2000);
   };
   return (
@@ -558,11 +646,14 @@ function PasswordForm({
     url: initial?.url ?? "",
     notes: initial?.notes ?? "",
     category: initial?.category ?? "",
+    tags: initial?.tags ?? [],
   });
   const [showPw, setShowPw] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const history = initial?.passwordHistory ?? [];
 
   const set =
     (field: keyof FormValues) =>
@@ -696,6 +787,19 @@ function PasswordForm({
         </div>
 
         <div className="space-y-1.5">
+          <Label>
+            Etiketler
+            <span className="ml-1.5 font-normal text-muted-foreground text-xs">
+              opsiyonel
+            </span>
+          </Label>
+          <TagInput
+            onChange={(tags) => setValues((v) => ({ ...v, tags }))}
+            value={values.tags ?? []}
+          />
+        </div>
+
+        <div className="space-y-1.5">
           <Label htmlFor="f-notes">
             Notlar
             <span className="ml-1.5 font-normal text-muted-foreground text-xs">
@@ -711,6 +815,46 @@ function PasswordForm({
             value={values.notes}
           />
         </div>
+
+        {history.length > 0 && (
+          <div className="rounded-xl border bg-muted/30">
+            <button
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-left"
+              onClick={() => setShowHistory((v) => !v)}
+              type="button"
+            >
+              <History className="size-3.5 text-muted-foreground" />
+              <span className="flex-1 text-[12px] font-medium text-muted-foreground">
+                Önceki Şifreler ({history.length})
+              </span>
+              <ChevronDown
+                className={cn(
+                  "size-3.5 text-muted-foreground transition-transform",
+                  showHistory && "rotate-180"
+                )}
+              />
+            </button>
+            {showHistory && (
+              <div className="flex flex-col gap-1 border-t px-3 py-2">
+                {history.map((pw, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: history ordered by time
+                  <div className="flex items-center gap-2" key={i}>
+                    <span className="flex-1 truncate font-mono text-[12px] text-muted-foreground">
+                      {"•".repeat(Math.min(pw.length, 16))}
+                    </span>
+                    <button
+                      className="shrink-0 rounded-md border px-2 py-0.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      onClick={() => setValues((v) => ({ ...v, password: pw }))}
+                      type="button"
+                    >
+                      Kullan
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {error && (
           <p className="rounded-md bg-destructive/10 px-3 py-2 text-destructive text-sm">
@@ -1016,6 +1160,8 @@ function PasswordCard({
   entry,
   onEdit,
   onDelete,
+  onToggleFavorite,
+  onRecordUsage,
   selected,
   selectionMode,
   onToggleSelected,
@@ -1023,12 +1169,15 @@ function PasswordCard({
   entry: VaultEntry;
   onEdit: () => void;
   onDelete: () => void;
+  onToggleFavorite: () => void;
+  onRecordUsage: () => void;
   selected: boolean;
   selectionMode: boolean;
   onToggleSelected: () => void;
 }) {
   const [visible, setVisible] = useState(false);
   const [notesExpanded, setNotesExpanded] = useState(false);
+  const [hibp, setHibp] = useState<"idle" | "checking" | "safe" | number>("idle");
 
   const openUrl = () => {
     const url = entry.url.startsWith("http")
@@ -1044,12 +1193,31 @@ function PasswordCard({
     }
   };
 
+  const handleHibpCheck = async () => {
+    if (hibp === "checking") return;
+    setHibp("checking");
+    try {
+      const count = await checkHibp(entry.password);
+      setHibp(count === 0 ? "safe" : count);
+    } catch {
+      setHibp("idle");
+    }
+  };
+
   const displayUrl = entry.url
     .replace(URL_PROTOCOL_REGEX, "")
     .replace(TRAILING_SLASH_REGEX, "");
 
   const notesIsLong =
     entry.notes.split("\n").length > 2 || entry.notes.length > 90;
+
+  const daysSince = Math.floor((Date.now() - entry.updatedAt) / 86_400_000);
+  const ageBadge =
+    daysSince > 90
+      ? { label: `${daysSince}g`, cls: "bg-red-500/10 text-red-500" }
+      : daysSince > 30
+        ? { label: `${daysSince}g`, cls: "bg-yellow-500/10 text-yellow-500" }
+        : null;
 
   return (
     <div
@@ -1068,31 +1236,64 @@ function PasswordCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-[13.5px] leading-snug">
-            {entry.title}
-          </p>
-          {entry.category && (
-            <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-[10px] text-primary uppercase tracking-wide">
-              {entry.category}
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            <p className="truncate font-semibold text-[13.5px] leading-snug">
+              {entry.title}
+            </p>
+            {ageBadge && (
+              <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold", ageBadge.cls)}>
+                {ageBadge.label}
+              </span>
+            )}
+          </div>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {entry.category && (
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-[10px] text-primary uppercase tracking-wide">
+                {entry.category}
+              </span>
+            )}
+            {(entry.tags ?? []).map((tag) => (
+              <span
+                className="inline-flex items-center gap-0.5 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                key={tag}
+              >
+                <Tag className="size-2.5" />
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="flex shrink-0 items-center gap-0.5">
           <button
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            onClick={onEdit}
+            className={cn(
+              "flex size-7 items-center justify-center rounded-lg transition-colors",
+              entry.isFavorite
+                ? "text-amber-400 hover:text-amber-500"
+                : "text-muted-foreground/30 opacity-0 transition-opacity group-hover:opacity-100 hover:text-amber-400"
+            )}
+            onClick={onToggleFavorite}
+            title={entry.isFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
             type="button"
           >
-            <Pencil className="size-3.5" />
+            <Star className={cn("size-3.5", entry.isFavorite && "fill-current")} />
           </button>
-          <button
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-            onClick={onDelete}
-            type="button"
-          >
-            <Trash2 className="size-3.5" />
-          </button>
+          <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+            <button
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              onClick={onEdit}
+              type="button"
+            >
+              <Pencil className="size-3.5" />
+            </button>
+            <button
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              onClick={onDelete}
+              type="button"
+            >
+              <Trash2 className="size-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1106,7 +1307,7 @@ function PasswordCard({
             <span className="flex-1 truncate text-[13px] text-muted-foreground">
               {entry.username}
             </span>
-            <CopyButton value={entry.username} />
+            <CopyButton onCopy={onRecordUsage} value={entry.username} />
           </div>
         )}
 
@@ -1131,7 +1332,7 @@ function PasswordCard({
               <Eye className="size-3" />
             )}
           </button>
-          <CopyButton value={entry.password} />
+          <CopyButton onCopy={onRecordUsage} value={entry.password} />
         </div>
 
         {entry.url && (
@@ -1174,6 +1375,41 @@ function PasswordCard({
             </div>
           </div>
         )}
+
+        {/* HIBP check */}
+        <div className="mt-1 flex justify-end px-1">
+          <button
+            className={cn(
+              "flex items-center gap-1 rounded-md px-2 py-1 text-[11px] transition-colors",
+              hibp === "safe"
+                ? "text-emerald-500"
+                : typeof hibp === "number"
+                  ? "text-red-500"
+                  : "text-muted-foreground/50 hover:text-muted-foreground"
+            )}
+            disabled={hibp === "checking"}
+            onClick={handleHibpCheck}
+            title="Have I Been Pwned ile sızdırılmış şifre kontrolü"
+            type="button"
+          >
+            {hibp === "checking" ? (
+              <RefreshCw className="size-3 animate-spin" />
+            ) : hibp === "safe" ? (
+              <ShieldCheck className="size-3" />
+            ) : typeof hibp === "number" ? (
+              <ShieldAlert className="size-3" />
+            ) : (
+              <ShieldCheck className="size-3" />
+            )}
+            {hibp === "checking"
+              ? "Kontrol ediliyor…"
+              : hibp === "safe"
+                ? "Sızdırılmamış"
+                : typeof hibp === "number"
+                  ? `${hibp.toLocaleString()}x sızdırıldı`
+                  : "Sızdırılmış mı?"}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1704,10 +1940,15 @@ export function PasswordsPage() {
     deleteEntry,
     deleteEntries,
     updateEntriesCategory,
+    toggleFavorite,
+    recordUsage,
   } = useVaultStore();
-  const { activeCategory, addCategory } = useCategoriesStore();
+  const { activeCategory, specialFilter, addCategory } = useCategoriesStore();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | VaultItemType>("all");
+  const [strengthFilter, setStrengthFilter] = useState<"all" | "weak" | "fair" | "strong">("all");
+  const [dateFilter, setDateFilter] = useState<"all" | "week" | "month" | "old">("all");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window === "undefined") {
       return "grid";
@@ -1730,22 +1971,55 @@ export function PasswordsPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkCategory, setBulkCategory] = useState("");
 
-  const entries = (vault?.entries ?? []).filter(
-    (e) =>
-      (activeCategory === null || e.category === activeCategory) &&
-      (typeFilter === "all" || getEntryType(e) === typeFilter) &&
-      (e.title.toLowerCase().includes(search.toLowerCase()) ||
-        e.username.toLowerCase().includes(search.toLowerCase()) ||
-        e.url.toLowerCase().includes(search.toLowerCase()) ||
-        (e.cardholderName ?? "").toLowerCase().includes(search.toLowerCase()) ||
-        (e.cardNumber ?? "").includes(onlyDigits(search)))
+  const allEntries = vault?.entries ?? [];
+
+  const recentEntries = specialFilter === "recent"
+    ? [...allEntries]
+        .filter((e) => e.lastUsed)
+        .sort((a, b) => (b.lastUsed ?? 0) - (a.lastUsed ?? 0))
+        .slice(0, 10)
+    : null;
+
+  const now = Date.now();
+  const MS_DAY = 86_400_000;
+
+  const entries = (specialFilter === "recent" ? (recentEntries ?? []) : allEntries).filter(
+    (e) => {
+      if (specialFilter === "favorites" && !e.isFavorite) return false;
+      if (specialFilter !== "recent" && activeCategory !== null && e.category !== activeCategory) return false;
+      if (typeFilter !== "all" && getEntryType(e) !== typeFilter) return false;
+
+      if (strengthFilter !== "all" && getEntryType(e) === "password") {
+        const bits = entropy(e.password);
+        if (strengthFilter === "weak" && bits >= 40) return false;
+        if (strengthFilter === "fair" && (bits < 40 || bits >= 70)) return false;
+        if (strengthFilter === "strong" && bits < 70) return false;
+      }
+
+      if (dateFilter !== "all") {
+        const age = now - e.updatedAt;
+        if (dateFilter === "week" && age > 7 * MS_DAY) return false;
+        if (dateFilter === "month" && age > 30 * MS_DAY) return false;
+        if (dateFilter === "old" && age <= 90 * MS_DAY) return false;
+      }
+
+      if (search === "") return true;
+      const q = search.toLowerCase();
+      return (
+        e.title.toLowerCase().includes(q) ||
+        e.username.toLowerCase().includes(q) ||
+        e.url.toLowerCase().includes(q) ||
+        (e.notes ?? "").toLowerCase().includes(q) ||
+        (e.tags ?? []).some((t) => t.includes(q)) ||
+        (e.cardholderName ?? "").toLowerCase().includes(q) ||
+        (e.cardNumber ?? "").includes(onlyDigits(search))
+      );
+    }
   );
 
   const selectionMode = selectionEnabled || selectedIds.length > 0;
-  const passwordCount =
-    vault?.entries.filter((e) => getEntryType(e) === "password").length ?? 0;
-  const cardCount =
-    vault?.entries.filter((e) => getEntryType(e) === "card").length ?? 0;
+  const passwordCount = entries.filter((e) => getEntryType(e) === "password").length;
+  const cardCount = entries.filter((e) => getEntryType(e) === "card").length;
 
   useEffect(() => {
     window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, viewMode);
@@ -1795,9 +2069,15 @@ export function PasswordsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-semibold text-xl">Şifrelerim</h1>
+          <h1 className="font-semibold text-xl">
+            {specialFilter === "favorites"
+              ? "Favoriler"
+              : specialFilter === "recent"
+                ? "Son Kullanılanlar"
+                : (activeCategory ?? "Şifrelerim")}
+          </h1>
           <p className="text-muted-foreground text-xs">
-            {vault?.entries.length ?? 0} kayıt · {passwordCount} şifre ·{" "}
+            {entries.length} kayıt · {passwordCount} şifre ·{" "}
             {cardCount} kart · AES-256-GCM ile şifreli
           </p>
         </div>
@@ -1957,15 +2237,86 @@ export function PasswordsPage() {
             ))}
           </div>
         </div>
-        <div className="relative">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Başlık, kullanıcı adı, URL veya kart ara…"
-            value={search}
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="pl-9"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Başlık, kullanıcı adı, URL, not, etiket veya kart ara…"
+              value={search}
+            />
+          </div>
+          <button
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-md border transition-colors",
+              showAdvanced || strengthFilter !== "all" || dateFilter !== "all"
+                ? "border-primary bg-primary/10 text-primary"
+                : "bg-background text-muted-foreground hover:bg-muted"
+            )}
+            onClick={() => setShowAdvanced((v) => !v)}
+            title="Gelişmiş filtre"
+            type="button"
+          >
+            <SlidersHorizontal className="size-4" />
+          </button>
         </div>
+
+        {showAdvanced && (
+          <div className="flex flex-wrap gap-3 rounded-xl border bg-muted/30 px-4 py-3">
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Şifre Gücü</p>
+              <div className="flex gap-1.5">
+                {([["all", "Tümü"], ["weak", "Zayıf"], ["fair", "Orta"], ["strong", "Güçlü"]] as const).map(([v, l]) => (
+                  <button
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                      strengthFilter === v
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "bg-background text-muted-foreground hover:bg-muted"
+                    )}
+                    key={v}
+                    onClick={() => setStrengthFilter(v)}
+                    type="button"
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Son Güncelleme</p>
+              <div className="flex gap-1.5">
+                {([["all", "Tümü"], ["week", "Bu hafta"], ["month", "Bu ay"], ["old", "90g+"]] as const).map(([v, l]) => (
+                  <button
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                      dateFilter === v
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "bg-background text-muted-foreground hover:bg-muted"
+                    )}
+                    key={v}
+                    onClick={() => setDateFilter(v)}
+                    type="button"
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(strengthFilter !== "all" || dateFilter !== "all") && (
+              <button
+                className="self-end rounded-full border px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted"
+                onClick={() => { setStrengthFilter("all"); setDateFilter("all"); }}
+                type="button"
+              >
+                Filtreleri temizle
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {selectionMode && (
@@ -1983,6 +2334,18 @@ export function PasswordsPage() {
           >
             <FolderOpen className="mr-1.5 size-4" />
             Kategoriye taşı
+          </Button>
+          <Button
+            disabled={selectedIds.length === 0}
+            onClick={async () => {
+              await updateEntriesCategory(selectedIds, "");
+              clearSelection();
+            }}
+            size="sm"
+            variant="outline"
+          >
+            <X className="mr-1.5 size-4" />
+            Kategoriyi kaldır
           </Button>
           <Button
             onClick={() => setBulkDeleteOpen(true)}
@@ -2049,6 +2412,8 @@ export function PasswordsPage() {
                   key={entry.id}
                   onDelete={() => setDeleteId(entry.id)}
                   onEdit={() => setEditEntry(entry)}
+                  onToggleFavorite={() => toggleFavorite(entry.id)}
+                  onRecordUsage={() => recordUsage(entry.id)}
                   onToggleSelected={() => toggleSelected(entry.id)}
                   selected={selectedIds.includes(entry.id)}
                   selectionMode={selectionMode}
