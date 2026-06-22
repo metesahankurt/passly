@@ -2,12 +2,13 @@
 
 import { CommandPalette } from "@workspace/core/components/common/command-palette";
 import { DesktopUpdateDialog } from "@workspace/core/components/common/desktop-update-dialog";
+import { HotkeysDialog } from "@workspace/core/components/common/hotkeys-dialog";
 import { AppHeader } from "@workspace/core/components/layout/app-header";
 import { AppSidebar } from "@workspace/core/components/layout/app-sidebar";
 import { TitleBar } from "@workspace/core/components/layout/title-bar";
+import { useAppHotkeys } from "@workspace/core/hooks/use-app-hotkeys";
 import { useAutoLock } from "@workspace/core/hooks/use-auto-lock";
 import { ThemeProvider } from "@workspace/core/providers/theme-provider";
-import { useCommandPaletteStore } from "@workspace/core/stores/command-palette-store";
 import {
   SidebarInset,
   SidebarProvider,
@@ -30,20 +31,8 @@ interface AppLayoutProps {
   pathname: string;
 }
 
-function KeyboardShortcuts() {
-  const toggle = useCommandPaletteStore((s) => s.toggle);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        toggle();
-      }
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [toggle]);
-
+function HotkeysRegistrar({ navigate }: { navigate: (path: string) => void }) {
+  useAppHotkeys({ navigate });
   return null;
 }
 
@@ -112,6 +101,7 @@ export function AppLayout({
               paddingTop: isTauri ? "2rem" : "env(safe-area-inset-top)",
             }}
           >
+            <HotkeysRegistrar navigate={navigate} />
             <AppSidebar
               className={isTauri ? "top-8 h-[calc(100svh-2rem)]" : undefined}
               LinkComponent={LinkComponent}
@@ -123,8 +113,8 @@ export function AppLayout({
               {children}
               <Toaster />
             </SidebarInset>
+            <HotkeysDialog />
             <CommandPalette navigate={navigate} />
-            <KeyboardShortcuts />
             <AutoLockGuard />
             {isTauri && <DesktopUpdateDialog />}
           </SidebarProvider>
