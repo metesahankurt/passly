@@ -166,7 +166,7 @@ export function AppSidebar({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
-                isActive={specialFilter === "favorites"}
+                isActive={isPasswordsActive && specialFilter === "favorites"}
                 onClick={() => {
                   setSpecialFilter("favorites");
                   if (!isPasswordsActive && navigate) {
@@ -181,7 +181,7 @@ export function AppSidebar({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
-                isActive={specialFilter === "recent"}
+                isActive={isPasswordsActive && specialFilter === "recent"}
                 onClick={() => {
                   setSpecialFilter("recent");
                   if (!isPasswordsActive && navigate) {

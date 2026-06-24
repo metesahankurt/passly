@@ -2,6 +2,7 @@
 
 import type { VaultEntry } from "@workspace/core/lib/vault-crypto";
 import { useVaultStore } from "@workspace/core/stores/vault-store";
+import { useTranslations } from "@workspace/i18n";
 import { cn } from "@workspace/ui/lib/utils";
 import {
   AlertTriangle,
@@ -29,14 +30,14 @@ type Strength = "critical" | "weak" | "fair" | "good" | "strong";
 
 function getStrength(bits: number): {
   strength: Strength;
-  label: string;
+  labelKey: string;
   color: string;
   bar: string;
 } {
   if (bits < 28) {
     return {
       strength: "critical",
-      label: "Çok Zayıf",
+      labelKey: "strengthCritical",
       color: "text-red-500",
       bar: "bg-red-500 w-[12%]",
     };
@@ -44,7 +45,7 @@ function getStrength(bits: number): {
   if (bits < 40) {
     return {
       strength: "weak",
-      label: "Zayıf",
+      labelKey: "strengthWeak",
       color: "text-orange-500",
       bar: "bg-orange-500 w-[30%]",
     };
@@ -52,7 +53,7 @@ function getStrength(bits: number): {
   if (bits < 55) {
     return {
       strength: "fair",
-      label: "Orta",
+      labelKey: "strengthFair",
       color: "text-yellow-500",
       bar: "bg-yellow-500 w-[52%]",
     };
@@ -60,14 +61,14 @@ function getStrength(bits: number): {
   if (bits < 70) {
     return {
       strength: "good",
-      label: "İyi",
+      labelKey: "strengthGood",
       color: "text-lime-500",
       bar: "bg-lime-500 w-[75%]",
     };
   }
   return {
     strength: "strong",
-    label: "Güçlü",
+    labelKey: "strengthStrong",
     color: "text-emerald-500",
     bar: "bg-emerald-500 w-full",
   };
@@ -181,6 +182,7 @@ function StatCard({
 
 export function HealthPage() {
   const { vault } = useVaultStore();
+  const t = useTranslations("HealthPage");
   const [activeSection, setActiveSection] = useState<
     "weak" | "duplicate" | "old" | null
   >(null);
@@ -228,19 +230,19 @@ export function HealthPage() {
     {
       key: "weak" as const,
       entries: weak,
-      badge: "Zayıf",
+      badge: t("weakBadge"),
       badgeColor: "bg-orange-500/10 text-orange-500",
     },
     {
       key: "duplicate" as const,
       entries: duplicate,
-      badge: "Tekrar",
+      badge: t("duplicateBadge"),
       badgeColor: "bg-red-500/10 text-red-500",
     },
     {
       key: "old" as const,
       entries: old,
-      badge: `+${OLD_DAYS}g`,
+      badge: `+${OLD_DAYS}d`,
       badgeColor: "bg-muted text-muted-foreground",
     },
   ];
@@ -250,9 +252,9 @@ export function HealthPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div>
-          <h1 className="font-semibold text-xl">Şifre Sağlığı</h1>
+          <h1 className="font-semibold text-xl">{t("title")}</h1>
           <p className="text-muted-foreground text-xs">
-            {passwords.length} şifre analiz edildi
+            {t("subtitle", { count: passwords.length })}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -275,10 +277,10 @@ export function HealthPage() {
               )}
               <span className="font-semibold text-sm">
                 {score >= 80
-                  ? "Güvenli görünüyor"
+                  ? t("scoreGood")
                   : score >= 50
-                    ? "İyileştirme önerilen"
-                    : "Dikkat gerekiyor"}
+                    ? t("scoreImprove")
+                    : t("scoreAttention")}
               </span>
             </div>
             <span className={cn("font-bold text-lg", scoreColor)}>
@@ -306,19 +308,19 @@ export function HealthPage() {
             color="bg-orange-500/10 text-orange-500"
             count={weak.length}
             icon={AlertTriangle}
-            label="Zayıf şifre"
+            label={t("weakLabel")}
           />
           <StatCard
             color="bg-red-500/10 text-red-500"
             count={duplicate.length}
             icon={RefreshCw}
-            label="Tekrar eden şifre"
+            label={t("duplicateLabel")}
           />
           <StatCard
             color="bg-muted text-muted-foreground"
             count={old.length}
             icon={ShieldAlert}
-            label={`${OLD_DAYS}+ gündür değiştirilmedi`}
+            label={t("oldLabel", { days: OLD_DAYS })}
           />
         </div>
 
@@ -348,11 +350,11 @@ export function HealthPage() {
                     {badge}
                   </span>
                   <span className="font-medium text-sm">
-                    {entries.length} kayıt
+                    {t("recordCount", { count: entries.length })}
                   </span>
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {open ? "Gizle" : "Göster"}
+                  {open ? t("hide") : t("show")}
                 </span>
               </button>
 
@@ -360,16 +362,21 @@ export function HealthPage() {
                 <div className="flex flex-col gap-2 border-t px-4 py-3">
                   {entries.map((entry) => {
                     const bits = entropy(entry.password);
-                    const { label } = getStrength(bits);
+                    const { labelKey } = getStrength(bits);
                     const daysSince = Math.floor(
                       (now - entry.updatedAt) / MS_PER_DAY
                     );
                     const detail =
                       key === "weak"
-                        ? `Entropi: ${Math.round(bits)} bit · ${label}`
+                        ? t("entropyDetail", {
+                            bits: Math.round(bits),
+                            label: t(labelKey as Parameters<typeof t>[0]),
+                          })
                         : key === "duplicate"
-                          ? `${pwMap.get(entry.password)?.length ?? 2} kayıtta aynı şifre`
-                          : `${daysSince} gün önce güncellendi`;
+                          ? t("duplicateDetail", {
+                              count: pwMap.get(entry.password)?.length ?? 2,
+                            })
+                          : t("oldDetail", { days: daysSince });
 
                     return (
                       <EntryRow
@@ -391,9 +398,9 @@ export function HealthPage() {
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed py-16 text-center">
             <ShieldCheck className="size-10 text-emerald-500" />
             <div>
-              <p className="font-semibold">Harika! Hiçbir sorun bulunamadı.</p>
+              <p className="font-semibold">{t("allClearTitle")}</p>
               <p className="mt-1 text-muted-foreground text-sm">
-                Tüm şifreleriniz güçlü ve benzersiz görünüyor.
+                {t("allClearDescription")}
               </p>
             </div>
           </div>

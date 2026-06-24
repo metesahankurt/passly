@@ -2055,7 +2055,8 @@ export function PasswordsPage() {
       (e.notes ?? "").toLowerCase().includes(q) ||
       (e.tags ?? []).some((t) => t.includes(q)) ||
       (e.cardholderName ?? "").toLowerCase().includes(q) ||
-      (e.cardNumber ?? "").includes(onlyDigits(search))
+      (onlyDigits(search).length > 0 &&
+        (e.cardNumber ?? "").includes(onlyDigits(search)))
     );
   });
 

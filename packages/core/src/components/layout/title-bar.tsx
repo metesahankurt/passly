@@ -23,7 +23,7 @@ export function TitleBar() {
 
   return (
     <div
-      className="fixed top-0 right-0 left-0 z-50 flex h-8 select-none items-center border-sidebar-border border-b bg-sidebar"
+      className="fixed top-0 right-0 left-0 z-50 flex h-8 select-none items-center border-b bg-sidebar"
       data-tauri-drag-region
     >
       <div
