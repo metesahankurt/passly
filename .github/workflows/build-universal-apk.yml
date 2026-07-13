@@ -60,6 +60,12 @@ jobs:
       - name: Install frontend deps
         run: pnpm install
 
+      - name: Reinitialize Android project
+        working-directory: apps/native
+        run: |
+          rm -rf src-tauri/gen/android
+          pnpm tauri android init --ci --skip-targets-install
+
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
