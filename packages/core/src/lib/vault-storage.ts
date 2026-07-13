@@ -2,6 +2,26 @@ import type { EncryptedVault } from "@workspace/core/lib/vault-crypto";
 
 const VAULT_KEY = "psv-vault";
 
+interface PasslyFileHandle {
+  createWritable(): Promise<PasslyWritableFile>;
+}
+
+interface PasslyWritableFile {
+  close(): Promise<void>;
+  write(content: string): Promise<void>;
+}
+
+type FilePickerWindow = Window &
+  typeof globalThis & {
+    showSaveFilePicker?: (options: {
+      suggestedName: string;
+      types: Array<{
+        accept: Record<string, string[]>;
+        description: string;
+      }>;
+    }) => Promise<PasslyFileHandle>;
+  };
+
 export function loadEncryptedVault(): EncryptedVault | null {
   if (typeof window === "undefined") {
     return null;
@@ -27,9 +47,10 @@ export async function exportVaultFile(vault: EncryptedVault): Promise<void> {
   const filename = `passly-vault-${Date.now()}.psv`;
 
   // showSaveFilePicker works in Edge/WebView2 (Windows Tauri) and Chrome
-  if (typeof window !== "undefined" && "showSaveFilePicker" in window) {
+  const filePickerWindow = window as FilePickerWindow;
+  if (filePickerWindow.showSaveFilePicker) {
     try {
-      const handle = await (window as any).showSaveFilePicker({
+      const handle = await filePickerWindow.showSaveFilePicker({
         suggestedName: filename,
         types: [
           {
@@ -42,8 +63,8 @@ export async function exportVaultFile(vault: EncryptedVault): Promise<void> {
       await writable.write(content);
       await writable.close();
       return;
-    } catch (err: any) {
-      if (err?.name === "AbortError") {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === "AbortError") {
         return;
       }
     }
@@ -61,7 +82,7 @@ export async function exportVaultFile(vault: EncryptedVault): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
-export async function importVaultFile(file: File): Promise<EncryptedVault> {
+export function importVaultFile(file: File): Promise<EncryptedVault> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {

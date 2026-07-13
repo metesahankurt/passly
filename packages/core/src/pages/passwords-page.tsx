@@ -33,9 +33,11 @@ import {
   Globe,
   History,
   KeyRound,
+  Landmark,
   LayoutGrid,
   List,
   Lock,
+  type LucideIcon,
   Mail,
   NotebookText,
   Pencil,
@@ -65,6 +67,7 @@ const CHARS = {
 
 const URL_PROTOCOL_REGEX = /^https?:\/\//;
 const TRAILING_SLASH_REGEX = /\/$/;
+const MS_DAY = 86_400_000;
 
 type TauriWindow = Window &
   typeof globalThis & {
@@ -75,6 +78,20 @@ type TauriWindow = Window &
 
 type VaultItemType = "password" | "card";
 type ViewMode = "grid" | "compact" | "list";
+type DateFilter = "all" | "week" | "month" | "old";
+type StrengthFilter = "all" | "weak" | "fair" | "strong";
+type TypeFilter = "all" | VaultItemType;
+type HibpState = "idle" | "checking" | "safe" | number;
+
+interface VaultFilterOptions {
+  activeCategory: string | null;
+  dateFilter: DateFilter;
+  now: number;
+  search: string;
+  specialFilter: "favorites" | "recent" | null;
+  strengthFilter: StrengthFilter;
+  typeFilter: TypeFilter;
+}
 
 const VIEW_MODE_STORAGE_KEY = "passly:vault-view-mode";
 const VIEW_MODE_OPTIONS = [
@@ -176,6 +193,124 @@ function isValidExpiry(month: string, year: string) {
 
 function getEntryType(entry: VaultEntry): VaultItemType {
   return entry.itemType === "card" ? "card" : "password";
+}
+
+function matchesStrengthFilter(
+  entry: VaultEntry,
+  strengthFilter: StrengthFilter
+): boolean {
+  if (strengthFilter === "all" || getEntryType(entry) === "card") {
+    return true;
+  }
+  const bits = entropy(entry.password);
+  if (strengthFilter === "weak") {
+    return bits < 40;
+  }
+  if (strengthFilter === "fair") {
+    return bits >= 40 && bits < 70;
+  }
+  return bits >= 70;
+}
+
+function matchesDateFilter(
+  entry: VaultEntry,
+  dateFilter: DateFilter,
+  now: number
+): boolean {
+  if (dateFilter === "all") {
+    return true;
+  }
+  const age = now - entry.updatedAt;
+  if (dateFilter === "week") {
+    return age <= 7 * MS_DAY;
+  }
+  if (dateFilter === "month") {
+    return age <= 30 * MS_DAY;
+  }
+  return age > 90 * MS_DAY;
+}
+
+function matchesSearch(entry: VaultEntry, search: string): boolean {
+  if (!search) {
+    return true;
+  }
+  const query = search.toLowerCase();
+  const cardDigits = onlyDigits(search);
+  return (
+    entry.title.toLowerCase().includes(query) ||
+    entry.username.toLowerCase().includes(query) ||
+    entry.url.toLowerCase().includes(query) ||
+    entry.notes.toLowerCase().includes(query) ||
+    (entry.tags ?? []).some((tag) => tag.toLowerCase().includes(query)) ||
+    (entry.bankName ?? "").toLowerCase().includes(query) ||
+    (entry.cardholderName ?? "").toLowerCase().includes(query) ||
+    (cardDigits.length > 0 && (entry.cardNumber ?? "").includes(cardDigits))
+  );
+}
+
+function matchesVaultFilters(
+  entry: VaultEntry,
+  filters: VaultFilterOptions
+): boolean {
+  if (filters.specialFilter === "favorites" && !entry.isFavorite) {
+    return false;
+  }
+  if (
+    filters.specialFilter !== "recent" &&
+    filters.activeCategory !== null &&
+    entry.category !== filters.activeCategory
+  ) {
+    return false;
+  }
+  if (
+    filters.typeFilter !== "all" &&
+    getEntryType(entry) !== filters.typeFilter
+  ) {
+    return false;
+  }
+  return (
+    matchesStrengthFilter(entry, filters.strengthFilter) &&
+    matchesDateFilter(entry, filters.dateFilter, filters.now) &&
+    matchesSearch(entry, filters.search)
+  );
+}
+
+function getHibpPresentation(hibp: HibpState): {
+  color: string;
+  icon: LucideIcon;
+  iconClassName: string;
+  label: string;
+} {
+  if (hibp === "checking") {
+    return {
+      color: "text-muted-foreground/50",
+      icon: RefreshCw,
+      iconClassName: "size-3 animate-spin",
+      label: "Kontrol ediliyor…",
+    };
+  }
+  if (hibp === "safe") {
+    return {
+      color: "text-emerald-500",
+      icon: ShieldCheck,
+      iconClassName: "size-3",
+      label: "Sızdırılmamış",
+    };
+  }
+  if (typeof hibp === "number") {
+    return {
+      color: "text-red-500",
+      icon: ShieldAlert,
+      iconClassName: "size-3",
+      label: `${hibp.toLocaleString()}x sızdırıldı`,
+    };
+  }
+  return {
+    color: "text-muted-foreground/50 hover:text-muted-foreground",
+    icon: ShieldCheck,
+    iconClassName: "size-3",
+    label: "Sızdırılmış mı?",
+  };
 }
 
 function entropy(password: string): number {
@@ -897,6 +1032,7 @@ function CardForm({
     url: "",
     notes: initial?.notes ?? "",
     category: initial?.category ?? "",
+    bankName: initial?.bankName ?? "",
     cardholderName: initial?.cardholderName ?? "",
     cardNumber: initial?.cardNumber ?? "",
     cardBrand: initial?.cardBrand ?? "",
@@ -968,6 +1104,9 @@ function CardForm({
           <div className="mb-5 flex items-start justify-between">
             <div>
               <p className="font-semibold text-sm">{values.title || "Kart"}</p>
+              <p className="mt-0.5 text-muted-foreground text-xs">
+                {values.bankName || "Banka belirtilmedi"}
+              </p>
               <p className="mt-1 font-mono text-muted-foreground text-sm tracking-wider">
                 {formatCardNumber(cardDigits) || "•••• •••• •••• ••••"}
               </p>
@@ -1007,6 +1146,21 @@ function CardForm({
             onChange={set("title")}
             placeholder="örn. Garanti Bonus"
             value={values.title}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="card-bank">
+            Banka adı
+            <span className="ml-1.5 font-normal text-muted-foreground text-xs">
+              opsiyonel
+            </span>
+          </Label>
+          <Input
+            id="card-bank"
+            onChange={set("bankName")}
+            placeholder="örn. Garanti BBVA"
+            value={values.bankName}
           />
         </div>
 
@@ -1179,9 +1333,7 @@ function PasswordCard({
 }) {
   const [visible, setVisible] = useState(false);
   const [notesExpanded, setNotesExpanded] = useState(false);
-  const [hibp, setHibp] = useState<"idle" | "checking" | "safe" | number>(
-    "idle"
-  );
+  const [hibp, setHibp] = useState<HibpState>("idle");
 
   const openUrl = () => {
     const url = entry.url.startsWith("http")
@@ -1217,13 +1369,25 @@ function PasswordCard({
   const notesIsLong =
     entry.notes.split("\n").length > 2 || entry.notes.length > 90;
 
-  const daysSince = Math.floor((Date.now() - entry.updatedAt) / 86_400_000);
-  const ageBadge =
-    daysSince > 90
-      ? { label: `${daysSince}g`, cls: "bg-red-500/10 text-red-500" }
-      : daysSince > 30
-        ? { label: `${daysSince}g`, cls: "bg-yellow-500/10 text-yellow-500" }
-        : null;
+  const daysSince = Math.floor((Date.now() - entry.updatedAt) / MS_DAY);
+  let ageBadge: { cls: string; label: string } | null = null;
+  if (daysSince > 90) {
+    ageBadge = {
+      label: `${daysSince}g`,
+      cls: "bg-red-500/10 text-red-500",
+    };
+  } else if (daysSince > 30) {
+    ageBadge = {
+      label: `${daysSince}g`,
+      cls: "bg-yellow-500/10 text-yellow-500",
+    };
+  }
+  const {
+    color: hibpColor,
+    icon: HibpIcon,
+    iconClassName: hibpIconClassName,
+    label: hibpLabel,
+  } = getHibpPresentation(hibp);
 
   return (
     <div
@@ -1394,33 +1558,15 @@ function PasswordCard({
           <button
             className={cn(
               "flex items-center gap-1 rounded-md px-2 py-1 text-[11px] transition-colors",
-              hibp === "safe"
-                ? "text-emerald-500"
-                : typeof hibp === "number"
-                  ? "text-red-500"
-                  : "text-muted-foreground/50 hover:text-muted-foreground"
+              hibpColor
             )}
             disabled={hibp === "checking"}
             onClick={handleHibpCheck}
             title="Have I Been Pwned ile sızdırılmış şifre kontrolü"
             type="button"
           >
-            {hibp === "checking" ? (
-              <RefreshCw className="size-3 animate-spin" />
-            ) : hibp === "safe" ? (
-              <ShieldCheck className="size-3" />
-            ) : typeof hibp === "number" ? (
-              <ShieldAlert className="size-3" />
-            ) : (
-              <ShieldCheck className="size-3" />
-            )}
-            {hibp === "checking"
-              ? "Kontrol ediliyor…"
-              : hibp === "safe"
-                ? "Sızdırılmamış"
-                : typeof hibp === "number"
-                  ? `${hibp.toLocaleString()}x sızdırıldı`
-                  : "Sızdırılmış mı?"}
+            <HibpIcon className={hibpIconClassName} />
+            {hibpLabel}
           </button>
         </div>
       </div>
@@ -1447,6 +1593,7 @@ function PaymentCard({
   const cardNumber = entry.cardNumber ?? "";
   const formattedNumber = formatCardNumber(cardNumber);
   const expiry = `${entry.expiryMonth ?? "MM"}/${entry.expiryYear?.slice(-2) ?? "YY"}`;
+  const bankName = entry.bankName?.trim();
 
   return (
     <div
@@ -1457,23 +1604,33 @@ function PaymentCard({
     >
       <div className="relative bg-gradient-to-br from-foreground to-foreground/70 p-4 text-background">
         <div className="mb-8 flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2.5">
             {selectionMode && (
               <SelectionToggle checked={selected} onChange={onToggleSelected} />
             )}
-            <CreditCard className="size-5" />
-            <span className="font-semibold text-sm">{entry.cardBrand}</span>
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-background/15">
+              <Landmark className="size-4.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate font-semibold text-sm">{entry.title}</p>
+              <p className="truncate text-[11px] opacity-70">
+                {bankName || "Banka belirtilmedi"}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex shrink-0 items-center gap-1">
+            <span className="mr-1 rounded-md bg-background/15 px-2 py-1 font-semibold text-[10px]">
+              {entry.cardBrand || "Kart"}
+            </span>
             <button
-              className="flex size-7 items-center justify-center rounded-lg bg-background/15 transition-colors hover:bg-background/25"
+              className="flex size-7 items-center justify-center rounded-lg bg-background/15 opacity-0 transition-all hover:bg-background/25 group-focus-within:opacity-100 group-hover:opacity-100"
               onClick={onEdit}
               type="button"
             >
               <Pencil className="size-3.5" />
             </button>
             <button
-              className="flex size-7 items-center justify-center rounded-lg bg-background/15 transition-colors hover:bg-background/25"
+              className="flex size-7 items-center justify-center rounded-lg bg-background/15 opacity-0 transition-all hover:bg-background/25 group-focus-within:opacity-100 group-hover:opacity-100"
               onClick={onDelete}
               type="button"
             >
@@ -1497,6 +1654,15 @@ function PaymentCard({
       </div>
 
       <div className="flex flex-col gap-0.5 p-3">
+        {bankName && (
+          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-muted/50">
+            <Landmark className="size-3.5 shrink-0 text-muted-foreground/45" />
+            <span className="flex-1 truncate text-[13px] text-muted-foreground">
+              {bankName}
+            </span>
+            <CopyButton value={bankName} />
+          </div>
+        )}
         <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-muted/50">
           <CreditCard className="size-3.5 shrink-0 text-muted-foreground/45" />
           <span className="flex-1 truncate font-mono text-[13px]">
@@ -1531,6 +1697,66 @@ function PaymentCard({
           </span>
         )}
       </div>
+    </div>
+  );
+}
+
+function VaultItemsGrid({
+  entries,
+  onDelete,
+  onEdit,
+  onRecordUsage,
+  onToggleFavorite,
+  onToggleSelected,
+  selectedIds,
+  selectionMode,
+  viewMode,
+}: {
+  entries: VaultEntry[];
+  onDelete: (id: string) => void;
+  onEdit: (entry: VaultEntry) => void;
+  onRecordUsage: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
+  onToggleSelected: (id: string) => void;
+  selectedIds: ReadonlySet<string>;
+  selectionMode: boolean;
+  viewMode: ViewMode;
+}) {
+  return (
+    <div
+      className={cn(
+        "grid grid-cols-1 items-start",
+        viewMode === "grid" && "gap-4 sm:grid-cols-2 lg:grid-cols-3",
+        viewMode === "compact" &&
+          "gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5",
+        viewMode === "list" && "gap-3"
+      )}
+    >
+      {entries.map((entry) =>
+        getEntryType(entry) === "card" ? (
+          <PaymentCard
+            entry={entry}
+            key={entry.id}
+            onDelete={() => onDelete(entry.id)}
+            onEdit={() => onEdit(entry)}
+            onToggleSelected={() => onToggleSelected(entry.id)}
+            selected={selectedIds.has(entry.id)}
+            selectionMode={selectionMode}
+          />
+        ) : (
+          <PasswordCard
+            entry={entry}
+            key={entry.id}
+            onDelete={() => onDelete(entry.id)}
+            onEdit={() => onEdit(entry)}
+            onRecordUsage={() => onRecordUsage(entry.id)}
+            onToggleFavorite={() => onToggleFavorite(entry.id)}
+            onToggleSelected={() => onToggleSelected(entry.id)}
+            selected={selectedIds.has(entry.id)}
+            selectionMode={selectionMode}
+          />
+        )
+      )}
     </div>
   );
 }
@@ -1958,13 +2184,9 @@ export function PasswordsPage() {
   } = useVaultStore();
   const { activeCategory, specialFilter, addCategory } = useCategoriesStore();
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | VaultItemType>("all");
-  const [strengthFilter, setStrengthFilter] = useState<
-    "all" | "weak" | "fair" | "strong"
-  >("all");
-  const [dateFilter, setDateFilter] = useState<
-    "all" | "week" | "month" | "old"
-  >("all");
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [strengthFilter, setStrengthFilter] = useState<StrengthFilter>("all");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window === "undefined") {
@@ -1998,73 +2220,33 @@ export function PasswordsPage() {
           .slice(0, 10)
       : null;
 
-  const now = Date.now();
-  const MS_DAY = 86_400_000;
-
+  const filterOptions: VaultFilterOptions = {
+    activeCategory,
+    dateFilter,
+    now: Date.now(),
+    search,
+    specialFilter,
+    strengthFilter,
+    typeFilter,
+  };
   const entries = (
     specialFilter === "recent" ? (recentEntries ?? []) : allEntries
-  ).filter((e) => {
-    if (specialFilter === "favorites" && !e.isFavorite) {
-      return false;
-    }
-    if (
-      specialFilter !== "recent" &&
-      activeCategory !== null &&
-      e.category !== activeCategory
-    ) {
-      return false;
-    }
-    if (typeFilter !== "all" && getEntryType(e) !== typeFilter) {
-      return false;
-    }
-
-    if (strengthFilter !== "all" && getEntryType(e) === "password") {
-      const bits = entropy(e.password);
-      if (strengthFilter === "weak" && bits >= 40) {
-        return false;
-      }
-      if (strengthFilter === "fair" && (bits < 40 || bits >= 70)) {
-        return false;
-      }
-      if (strengthFilter === "strong" && bits < 70) {
-        return false;
-      }
-    }
-
-    if (dateFilter !== "all") {
-      const age = now - e.updatedAt;
-      if (dateFilter === "week" && age > 7 * MS_DAY) {
-        return false;
-      }
-      if (dateFilter === "month" && age > 30 * MS_DAY) {
-        return false;
-      }
-      if (dateFilter === "old" && age <= 90 * MS_DAY) {
-        return false;
-      }
-    }
-
-    if (search === "") {
-      return true;
-    }
-    const q = search.toLowerCase();
-    return (
-      e.title.toLowerCase().includes(q) ||
-      e.username.toLowerCase().includes(q) ||
-      e.url.toLowerCase().includes(q) ||
-      (e.notes ?? "").toLowerCase().includes(q) ||
-      (e.tags ?? []).some((t) => t.includes(q)) ||
-      (e.cardholderName ?? "").toLowerCase().includes(q) ||
-      (onlyDigits(search).length > 0 &&
-        (e.cardNumber ?? "").includes(onlyDigits(search)))
-    );
-  });
+  ).filter((entry) => matchesVaultFilters(entry, filterOptions));
 
   const selectionMode = selectionEnabled || selectedIds.length > 0;
-  const passwordCount = entries.filter(
-    (e) => getEntryType(e) === "password"
-  ).length;
-  const cardCount = entries.filter((e) => getEntryType(e) === "card").length;
+  const passwordEntries = entries.filter((e) => getEntryType(e) === "password");
+  const cardEntries = entries.filter((e) => getEntryType(e) === "card");
+  const passwordCount = passwordEntries.length;
+  const cardCount = cardEntries.length;
+  const selectedIdSet = new Set(selectedIds);
+  const showGroupedEntries =
+    typeFilter === "all" && passwordCount > 0 && cardCount > 0;
+  let pageTitle = activeCategory ?? "Şifrelerim";
+  if (specialFilter === "favorites") {
+    pageTitle = "Favoriler";
+  } else if (specialFilter === "recent") {
+    pageTitle = "Son Kullanılanlar";
+  }
 
   useEffect(() => {
     window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, viewMode);
@@ -2114,13 +2296,7 @@ export function PasswordsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-semibold text-xl">
-            {specialFilter === "favorites"
-              ? "Favoriler"
-              : specialFilter === "recent"
-                ? "Son Kullanılanlar"
-                : (activeCategory ?? "Şifrelerim")}
-          </h1>
+          <h1 className="font-semibold text-xl">{pageTitle}</h1>
           <p className="text-muted-foreground text-xs">
             {entries.length} kayıt · {passwordCount} şifre · {cardCount} kart ·
             AES-256-GCM ile şifreli
@@ -2288,7 +2464,7 @@ export function PasswordsPage() {
             <Input
               className="pl-9"
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Başlık, kullanıcı adı, URL, not, etiket veya kart ara…"
+              placeholder="Başlık, banka, kullanıcı adı, URL, not, etiket veya kart ara…"
               value={search}
             />
           </div>
@@ -2429,7 +2605,7 @@ export function PasswordsPage() {
 
       {/* Entries */}
       <div className="flex-1 overflow-y-auto p-6">
-        {entries.length === 0 ? (
+        {entries.length === 0 && (
           <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed py-20 text-center">
             <div className="flex size-14 items-center justify-center rounded-full bg-muted">
               <KeyRound className="size-6 text-muted-foreground" />
@@ -2451,42 +2627,94 @@ export function PasswordsPage() {
               </Button>
             )}
           </div>
-        ) : (
-          <div
-            className={cn(
-              "grid grid-cols-1 items-start",
-              viewMode === "grid" && "gap-4 sm:grid-cols-2 lg:grid-cols-3",
-              viewMode === "compact" &&
-                "gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5",
-              viewMode === "list" && "gap-3"
-            )}
-          >
-            {entries.map((entry) =>
-              getEntryType(entry) === "card" ? (
-                <PaymentCard
-                  entry={entry}
-                  key={entry.id}
-                  onDelete={() => setDeleteId(entry.id)}
-                  onEdit={() => setEditEntry(entry)}
-                  onToggleSelected={() => toggleSelected(entry.id)}
-                  selected={selectedIds.includes(entry.id)}
-                  selectionMode={selectionMode}
-                />
-              ) : (
-                <PasswordCard
-                  entry={entry}
-                  key={entry.id}
-                  onDelete={() => setDeleteId(entry.id)}
-                  onEdit={() => setEditEntry(entry)}
-                  onRecordUsage={() => recordUsage(entry.id)}
-                  onToggleFavorite={() => toggleFavorite(entry.id)}
-                  onToggleSelected={() => toggleSelected(entry.id)}
-                  selected={selectedIds.includes(entry.id)}
-                  selectionMode={selectionMode}
-                />
-              )
-            )}
+        )}
+        {entries.length > 0 && showGroupedEntries && (
+          <div className="space-y-8">
+            <section
+              aria-labelledby="cards-section-title"
+              className="space-y-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <CreditCard className="size-4.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2
+                    className="font-semibold text-sm"
+                    id="cards-section-title"
+                  >
+                    Kartlar
+                  </h2>
+                  <p className="text-muted-foreground text-xs">
+                    Ödeme kartlarınız ve banka bilgileri
+                  </p>
+                </div>
+                <span className="rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground text-xs">
+                  {cardCount}
+                </span>
+              </div>
+              <VaultItemsGrid
+                entries={cardEntries}
+                onDelete={setDeleteId}
+                onEdit={setEditEntry}
+                onRecordUsage={recordUsage}
+                onToggleFavorite={toggleFavorite}
+                onToggleSelected={toggleSelected}
+                selectedIds={selectedIdSet}
+                selectionMode={selectionMode}
+                viewMode={viewMode}
+              />
+            </section>
+
+            <section
+              aria-labelledby="passwords-section-title"
+              className="space-y-4 border-t pt-8"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                  <KeyRound className="size-4.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2
+                    className="font-semibold text-sm"
+                    id="passwords-section-title"
+                  >
+                    Şifreler
+                  </h2>
+                  <p className="text-muted-foreground text-xs">
+                    Giriş bilgileriniz ve güvenli notlarınız
+                  </p>
+                </div>
+                <span className="rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground text-xs">
+                  {passwordCount}
+                </span>
+              </div>
+              <VaultItemsGrid
+                entries={passwordEntries}
+                onDelete={setDeleteId}
+                onEdit={setEditEntry}
+                onRecordUsage={recordUsage}
+                onToggleFavorite={toggleFavorite}
+                onToggleSelected={toggleSelected}
+                selectedIds={selectedIdSet}
+                selectionMode={selectionMode}
+                viewMode={viewMode}
+              />
+            </section>
           </div>
+        )}
+        {entries.length > 0 && !showGroupedEntries && (
+          <VaultItemsGrid
+            entries={entries}
+            onDelete={setDeleteId}
+            onEdit={setEditEntry}
+            onRecordUsage={recordUsage}
+            onToggleFavorite={toggleFavorite}
+            onToggleSelected={toggleSelected}
+            selectedIds={selectedIdSet}
+            selectionMode={selectionMode}
+            viewMode={viewMode}
+          />
         )}
       </div>
 

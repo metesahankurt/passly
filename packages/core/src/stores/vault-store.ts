@@ -12,9 +12,21 @@ import {
   saveEncryptedVault,
 } from "@workspace/core/lib/vault-storage";
 import { useActivityStore } from "@workspace/core/stores/activity-store";
+import { useCategoriesStore } from "@workspace/core/stores/categories-store";
 import { create } from "zustand";
 
 const log = useActivityStore.getState;
+const categoriesStore = useCategoriesStore.getState;
+
+function getEntryCategories(vault: Vault): string[] {
+  return Array.from(
+    new Set(
+      vault.entries
+        .map((entry) => entry.category.trim())
+        .filter((category) => category.length > 0)
+    )
+  );
+}
 
 type VaultStatus = "empty" | "locked" | "unlocked";
 
@@ -30,7 +42,7 @@ interface VaultState {
   deleteEntries(ids: string[]): Promise<void>;
   deleteEntriesByCategory(category: string): Promise<void>;
   deleteEntry(id: string): Promise<void>;
-  exportVault(): void;
+  exportVault(): Promise<void>;
   importVault(file: File, masterPassword: string): Promise<void>;
   initialize(): void;
   lock(): void;
@@ -62,9 +74,10 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
   },
 
   async createVault(masterPassword) {
-    const vault: Vault = { version: 1, entries: [] };
+    const vault: Vault = { version: 1, entries: [], categories: [] };
     const encrypted = await encryptVault(vault, masterPassword);
     saveEncryptedVault(encrypted);
+    categoriesStore().replaceCategories([]);
     set({ status: "unlocked", vault, masterPassword });
     log().addActivity({
       type: "vault_created",
@@ -79,6 +92,12 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
       throw new Error("Vault bulunamadı.");
     }
     const vault = await decryptVault(encrypted, masterPassword);
+    if (vault.categories) {
+      categoriesStore().replaceCategories([
+        ...vault.categories,
+        ...getEntryCategories(vault),
+      ]);
+    }
     set({ status: "unlocked", vault, masterPassword });
     log().addActivity({
       type: "vault_unlocked",
@@ -93,6 +112,7 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
 
   resetVault() {
     deleteEncryptedVault();
+    categoriesStore().replaceCategories([]);
     set({ status: "empty", vault: null, masterPassword: null });
   },
 
@@ -298,10 +318,18 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
   },
 
   async exportVault() {
-    const encrypted = loadEncryptedVault();
-    if (!encrypted) {
+    const { vault, masterPassword } = get();
+    if (!(vault && masterPassword)) {
       return;
     }
+    const exportedVault: Vault = {
+      ...vault,
+      categories: [
+        ...categoriesStore().categories,
+        ...getEntryCategories(vault),
+      ],
+    };
+    const encrypted = await encryptVault(exportedVault, masterPassword);
     await exportVaultFile(encrypted);
     log().addActivity({
       type: "vault_exported",
@@ -313,7 +341,12 @@ export const useVaultStore = create<VaultState>()((set, get) => ({
   async importVault(file, masterPassword) {
     const encrypted = await importVaultFile(file);
     const vault = await decryptVault(encrypted, masterPassword);
+    const importedCategories = [
+      ...(vault.categories ?? []),
+      ...getEntryCategories(vault),
+    ];
     saveEncryptedVault(encrypted);
+    categoriesStore().replaceCategories(importedCategories);
     set({ status: "unlocked", vault, masterPassword });
     log().addActivity({
       type: "vault_imported",

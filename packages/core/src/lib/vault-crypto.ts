@@ -3,6 +3,7 @@ const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
 
 export interface VaultEntry {
+  bankName?: string;
   cardBrand?: string;
   cardholderName?: string;
   cardNumber?: string;
@@ -26,6 +27,7 @@ export interface VaultEntry {
 }
 
 export interface Vault {
+  categories?: string[];
   entries: VaultEntry[];
   version: 1;
 }

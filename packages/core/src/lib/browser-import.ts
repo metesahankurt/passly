@@ -7,6 +7,8 @@ export interface BrowserImportEntry {
   username: string;
 }
 
+const LINE_BREAK_REGEX = /\r?\n/;
+
 // ── CSV Parser ──────────────────────────────────────────────────────────────
 
 function parseCSVRow(line: string): string[] {
@@ -35,7 +37,7 @@ function parseCSVRow(line: string): string[] {
 }
 
 function parseCSV(text: string): Record<string, string>[] {
-  const lines = text.split(/\r?\n/).filter((l) => l.trim());
+  const lines = text.split(LINE_BREAK_REGEX).filter((l) => l.trim());
   if (lines.length < 2) {
     return [];
   }
@@ -168,7 +170,6 @@ function mapRow(
       url = g("url");
       notes = g("notes");
       break;
-    case "chrome":
     default:
       title = g("name") || safeHostname(g("url"));
       username = g("username");

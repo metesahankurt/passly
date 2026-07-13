@@ -219,12 +219,18 @@ export function HealthPage() {
       ? 100
       : Math.round(((passwords.length - totalIssues) / passwords.length) * 100);
 
-  const scoreColor =
-    score >= 80
-      ? "text-emerald-500"
-      : score >= 50
-        ? "text-yellow-500"
-        : "text-red-500";
+  let scoreColor = "text-red-500";
+  let scoreBarColor = "bg-red-500";
+  let scoreLabel = t("scoreAttention");
+  if (score >= 80) {
+    scoreColor = "text-emerald-500";
+    scoreBarColor = "bg-emerald-500";
+    scoreLabel = t("scoreGood");
+  } else if (score >= 50) {
+    scoreColor = "text-yellow-500";
+    scoreBarColor = "bg-yellow-500";
+    scoreLabel = t("scoreImprove");
+  }
 
   const sections = [
     {
@@ -275,13 +281,7 @@ export function HealthPage() {
               ) : (
                 <ShieldAlert className="size-5 text-orange-500" />
               )}
-              <span className="font-semibold text-sm">
-                {score >= 80
-                  ? t("scoreGood")
-                  : score >= 50
-                    ? t("scoreImprove")
-                    : t("scoreAttention")}
-              </span>
+              <span className="font-semibold text-sm">{scoreLabel}</span>
             </div>
             <span className={cn("font-bold text-lg", scoreColor)}>
               {score}%
@@ -291,11 +291,7 @@ export function HealthPage() {
             <div
               className={cn(
                 "h-full rounded-full transition-all",
-                score >= 80
-                  ? "bg-emerald-500"
-                  : score >= 50
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
+                scoreBarColor
               )}
               style={{ width: `${score}%` }}
             />
@@ -366,17 +362,17 @@ export function HealthPage() {
                     const daysSince = Math.floor(
                       (now - entry.updatedAt) / MS_PER_DAY
                     );
-                    const detail =
-                      key === "weak"
-                        ? t("entropyDetail", {
-                            bits: Math.round(bits),
-                            label: t(labelKey as Parameters<typeof t>[0]),
-                          })
-                        : key === "duplicate"
-                          ? t("duplicateDetail", {
-                              count: pwMap.get(entry.password)?.length ?? 2,
-                            })
-                          : t("oldDetail", { days: daysSince });
+                    let detail = t("oldDetail", { days: daysSince });
+                    if (key === "weak") {
+                      detail = t("entropyDetail", {
+                        bits: Math.round(bits),
+                        label: t(labelKey as Parameters<typeof t>[0]),
+                      });
+                    } else if (key === "duplicate") {
+                      detail = t("duplicateDetail", {
+                        count: pwMap.get(entry.password)?.length ?? 2,
+                      });
+                    }
 
                     return (
                       <EntryRow

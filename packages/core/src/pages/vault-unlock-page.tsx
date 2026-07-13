@@ -24,6 +24,10 @@ export function VaultUnlockPage({ onUnlocked }: VaultUnlockPageProps) {
   }, [initialize]);
 
   const isCreate = status === "empty";
+  let submitLabel = isCreate ? "Vault Oluştur" : "Aç";
+  if (loading) {
+    submitLabel = isCreate ? "Oluşturuluyor…" : "Açılıyor…";
+  }
 
   const handleSubmit = async () => {
     setError("");
@@ -143,13 +147,7 @@ export function VaultUnlockPage({ onUnlocked }: VaultUnlockPageProps) {
           )}
 
           <Button className="w-full" disabled={loading} onClick={handleSubmit}>
-            {loading
-              ? isCreate
-                ? "Oluşturuluyor…"
-                : "Açılıyor…"
-              : isCreate
-                ? "Vault Oluştur"
-                : "Aç"}
+            {submitLabel}
           </Button>
         </div>
       </div>

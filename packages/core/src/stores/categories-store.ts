@@ -8,6 +8,7 @@ interface CategoriesState {
   addCategory(name: string): void;
   categories: string[];
   removeCategory(name: string): void;
+  replaceCategories(categories: string[]): void;
   setActiveCategory(name: string | null): void;
   setSpecialFilter(filter: SpecialFilter): void;
   specialFilter: SpecialFilter;
@@ -34,6 +35,19 @@ export const useCategoriesStore = create<CategoriesState>()(
         set((s) => ({
           categories: s.categories.filter((c) => c !== name),
           activeCategory: s.activeCategory === name ? null : s.activeCategory,
+        }));
+      },
+      replaceCategories(categories) {
+        const normalizedCategories = Array.from(
+          new Set(categories.map((category) => category.trim()).filter(Boolean))
+        );
+        set((state) => ({
+          categories: normalizedCategories,
+          activeCategory:
+            state.activeCategory &&
+            normalizedCategories.includes(state.activeCategory)
+              ? state.activeCategory
+              : null,
         }));
       },
       setActiveCategory(name) {
