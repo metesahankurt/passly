@@ -54,12 +54,9 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} overflow-hidden antialiased`}
       >
-        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted theme init script */}
-        <Script
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-          id="theme-init"
-          strategy="beforeInteractive"
-        />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
         <NextIntlClientProvider
           locale={locale}
           messages={localeMessages}

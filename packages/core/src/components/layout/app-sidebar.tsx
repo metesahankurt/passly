@@ -58,6 +58,13 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   pathname: string;
 }
 
+type TauriWindow = Window &
+  typeof globalThis & {
+    __TAURI_INTERNALS__?: {
+      invoke: (command: string, args: { url: string }) => Promise<unknown>;
+    };
+  };
+
 export function AppSidebar({
   pathname,
   LinkComponent = "a",
@@ -94,8 +101,12 @@ export function AppSidebar({
   }, [isMobile, setOpenMobile]);
 
   const openExternal = (url: string) => {
-    if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
-      (window as any).__TAURI_INTERNALS__.invoke("plugin:opener|open_url", {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const tauriWindow = window as TauriWindow;
+    if (tauriWindow.__TAURI_INTERNALS__) {
+      tauriWindow.__TAURI_INTERNALS__.invoke("plugin:opener|open_url", {
         url,
       });
     } else {
