@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="a30_dl" cx="0.5" cy="0.55" r="0.7"><stop offset="0" stop-color="#FFF4D6"/><stop offset="0.5" stop-color="#F7C873"/><stop offset="1" stop-color="#D9892A"/></radialGradient>
+    <linearGradient id="a30_dk" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#E9E3D7"/><stop offset="1" stop-color="#C9C0AF"/></linearGradient>
+    <linearGradient id="a30_dc" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F7F3EC"/><stop offset="1" stop-color="#E6DFD2"/></linearGradient>
+    <filter id="a30_dsh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="a30_dgl" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="30"/></filter>
+    <clipPath id="a30_dcp"><path d="M392 262 H560 A160 160 0 0 1 560 582 H486 V762 H392 Z M486 346 H556 A76 76 0 0 1 556 498 H486 Z" clip-rule="evenodd" transform="translate(-40 0)"/></clipPath>
+    <filter id="a30_dg" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#a30_dc)"/>
+  <rect width="1024" height="1024" rx="228" fill="#fff" filter="url(#a30_dg)"/>
+  <!-- opening + open flap span x 266–682; shift so the pair sits on the tile's centre -->
+  <g transform="translate(48 0)">
+  <g transform="translate(-40 0)">
+    <!-- the opening, light coming through -->
+    <path d="M392 262 H560 A160 160 0 0 1 560 582 H486 V762 H392 Z M486 346 H556 A76 76 0 0 1 556 498 H486 Z" fill="url(#a30_dl)" fill-rule="evenodd"/>
+  </g>
+  <!-- the card's cut edge: a thin shadow inside the opening's upper-left -->
+  <g clip-path="url(#a30_dcp)"><path d="M392 262 H560 A160 160 0 0 1 560 582 H486 V762 H392 Z M486 346 H556 A76 76 0 0 1 556 498 H486 Z" fill="none" stroke="#6B4A1A" stroke-width="18" opacity="0.35" transform="translate(-28 6)" fill-rule="evenodd"/></g>
+  <!-- the flap, folded open on its hinge: seen from the back, foreshortened -->
+  <g transform="translate(352 0) skewY(-7) scale(0.26 1) translate(-392 0) scale(-1 1) translate(-784 0)">
+    <path d="M392 262 H560 A160 160 0 0 1 560 582 H486 V762 H392 Z M486 346 H556 A76 76 0 0 1 556 498 H486 Z" fill="#000" opacity="0.25" fill-rule="evenodd" filter="url(#a30_dsh)" transform="translate(-30 30)"/>
+    <path d="M392 262 H560 A160 160 0 0 1 560 582 H486 V762 H392 Z M486 346 H556 A76 76 0 0 1 556 498 H486 Z" fill="url(#a30_dk)" fill-rule="evenodd"/>
+  </g>
+  <path d="M352 262 V762" stroke="#8E846F" stroke-width="3" opacity="0.6"/>
+  </g>
+</svg>
