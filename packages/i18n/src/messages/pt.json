@@ -25,6 +25,21 @@
     "title": "Idioma",
     "description": "Selecione seu idioma preferido"
   },
+  "ChangeMasterPassword": {
+    "title": "Alterar senha mestra",
+    "description": "O comprimento mínimo da nova senha mestra é {minimum}.",
+    "currentPassword": "Senha mestra atual",
+    "newPassword": "Nova senha mestra",
+    "confirmPassword": "Confirme a nova senha mestra",
+    "submit": "Alterar senha",
+    "pending": "Alterando a senha…",
+    "success": "Senha mestra alterada.",
+    "mismatch": "As novas senhas não coincidem.",
+    "invalidCurrent": "A senha mestra atual está incorreta.",
+    "invalidNew": "Insira uma nova senha mestra.",
+    "samePassword": "Escolha uma senha mestra diferente.",
+    "failed": "Não foi possível alterar a senha mestra."
+  },
   "ModeCard": {
     "title": "Modos",
     "description": "Escolha seu modo ou personalize seu estilo",

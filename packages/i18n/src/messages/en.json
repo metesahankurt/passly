@@ -25,6 +25,21 @@
     "title": "Language",
     "description": "Select your preferred language"
   },
+  "ChangeMasterPassword": {
+    "title": "Change master password",
+    "description": "Your new master password must contain at least {minimum, plural, one {# character} other {# characters}}.",
+    "currentPassword": "Current master password",
+    "newPassword": "New master password",
+    "confirmPassword": "Confirm new master password",
+    "submit": "Change password",
+    "pending": "Changing password…",
+    "success": "Master password changed.",
+    "mismatch": "The new passwords do not match.",
+    "invalidCurrent": "The current master password is incorrect.",
+    "invalidNew": "Enter a new master password.",
+    "samePassword": "Choose a different master password.",
+    "failed": "The master password could not be changed."
+  },
   "ModeCard": {
     "title": "Modes",
     "description": "Choose your mode or customize your style",

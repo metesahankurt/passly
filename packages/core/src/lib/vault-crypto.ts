@@ -1,6 +1,9 @@
 const PBKDF2_ITERATIONS = 200_000;
 const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
+const BASE64_CHUNK_LENGTH = 8192;
+
+export const MIN_MASTER_PASSWORD_LENGTH = 1;
 
 export interface VaultEntry {
   bankName?: string;
@@ -40,7 +43,14 @@ export interface EncryptedVault {
 }
 
 function toBase64(buf: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += BASE64_CHUNK_LENGTH) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(offset, offset + BASE64_CHUNK_LENGTH)
+    );
+  }
+  return btoa(binary);
 }
 
 function fromBase64(b64: string): Uint8Array<ArrayBuffer> {

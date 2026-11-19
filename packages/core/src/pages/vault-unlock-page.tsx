@@ -1,5 +1,6 @@
 "use client";
 
+import { MIN_MASTER_PASSWORD_LENGTH } from "@workspace/core/lib/vault-crypto";
 import { useVaultStore } from "@workspace/core/stores/vault-store";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
@@ -31,19 +32,13 @@ export function VaultUnlockPage({ onUnlocked }: VaultUnlockPageProps) {
 
   const handleSubmit = async () => {
     setError("");
-    if (!password.trim()) {
+    if (password.length < MIN_MASTER_PASSWORD_LENGTH) {
       setError("Lütfen bir şifre girin.");
       return;
     }
-    if (isCreate) {
-      if (password.length < 8) {
-        setError("Ana şifre en az 8 karakter olmalıdır.");
-        return;
-      }
-      if (password !== confirm) {
-        setError("Şifreler eşleşmiyor.");
-        return;
-      }
+    if (isCreate && password !== confirm) {
+      setError("Şifreler eşleşmiyor.");
+      return;
     }
     setLoading(true);
     try {
