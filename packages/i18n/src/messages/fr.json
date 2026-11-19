@@ -25,6 +25,21 @@
     "title": "Langue",
     "description": "Sélectionnez votre langue préférée"
   },
+  "ChangeMasterPassword": {
+    "title": "Modifier le mot de passe principal",
+    "description": "La longueur minimale du nouveau mot de passe principal est de {minimum}.",
+    "currentPassword": "Mot de passe principal actuel",
+    "newPassword": "Nouveau mot de passe principal",
+    "confirmPassword": "Confirmer le nouveau mot de passe principal",
+    "submit": "Modifier le mot de passe",
+    "pending": "Modification en cours…",
+    "success": "Mot de passe principal modifié.",
+    "mismatch": "Les nouveaux mots de passe ne correspondent pas.",
+    "invalidCurrent": "Le mot de passe principal actuel est incorrect.",
+    "invalidNew": "Saisissez un nouveau mot de passe principal.",
+    "samePassword": "Choisissez un autre mot de passe principal.",
+    "failed": "Impossible de modifier le mot de passe principal."
+  },
   "ModeCard": {
     "title": "Modes",
     "description": "Choisissez votre mode ou personnalisez votre style",

@@ -25,6 +25,21 @@
     "title": "Dil",
     "description": "Tercih ettiğiniz dili seçin"
   },
+  "ChangeMasterPassword": {
+    "title": "Ana parolayı değiştir",
+    "description": "Yeni ana parolanız en az {minimum} karakter olmalıdır.",
+    "currentPassword": "Mevcut ana parola",
+    "newPassword": "Yeni ana parola",
+    "confirmPassword": "Yeni ana parolayı doğrula",
+    "submit": "Parolayı değiştir",
+    "pending": "Parola değiştiriliyor…",
+    "success": "Ana parola değiştirildi.",
+    "mismatch": "Yeni parolalar eşleşmiyor.",
+    "invalidCurrent": "Mevcut ana parola yanlış.",
+    "invalidNew": "Yeni bir ana parola girin.",
+    "samePassword": "Mevcut paroladan farklı bir ana parola seçin.",
+    "failed": "Ana parola değiştirilemedi."
+  },
   "ModeCard": {
     "title": "Modlar",
     "description": "Modunuzu seçin veya stilinizi özelleştirin",

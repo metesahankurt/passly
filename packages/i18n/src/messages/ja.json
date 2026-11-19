@@ -25,6 +25,21 @@
     "title": "言語",
     "description": "お好みの言語を選択してください"
   },
+  "ChangeMasterPassword": {
+    "title": "マスターパスワードを変更",
+    "description": "新しいマスターパスワードは{minimum}文字以上にしてください。",
+    "currentPassword": "現在のマスターパスワード",
+    "newPassword": "新しいマスターパスワード",
+    "confirmPassword": "新しいマスターパスワード（確認）",
+    "submit": "パスワードを変更",
+    "pending": "パスワードを変更中…",
+    "success": "マスターパスワードを変更しました。",
+    "mismatch": "新しいパスワードと確認用の入力が一致しません。",
+    "invalidCurrent": "現在のマスターパスワードが正しくありません。",
+    "invalidNew": "新しいマスターパスワードを入力してください。",
+    "samePassword": "現在とは異なるマスターパスワードを選んでください。",
+    "failed": "マスターパスワードを変更できませんでした。"
+  },
   "ModeCard": {
     "title": "モード",
     "description": "モードを選択するか、スタイルをカスタマイズします",

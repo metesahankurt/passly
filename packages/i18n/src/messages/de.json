@@ -25,6 +25,21 @@
     "title": "Sprache",
     "description": "Wählen Sie Ihre bevorzugte Sprache"
   },
+  "ChangeMasterPassword": {
+    "title": "Master-Passwort ändern",
+    "description": "Die Mindestlänge für das neue Master-Passwort beträgt {minimum}.",
+    "currentPassword": "Aktuelles Master-Passwort",
+    "newPassword": "Neues Master-Passwort",
+    "confirmPassword": "Neues Master-Passwort bestätigen",
+    "submit": "Passwort ändern",
+    "pending": "Passwort wird geändert…",
+    "success": "Master-Passwort geändert.",
+    "mismatch": "Die neuen Passwörter stimmen nicht überein.",
+    "invalidCurrent": "Das aktuelle Master-Passwort ist falsch.",
+    "invalidNew": "Gib ein neues Master-Passwort ein.",
+    "samePassword": "Wähle ein anderes Master-Passwort.",
+    "failed": "Das Master-Passwort konnte nicht geändert werden."
+  },
   "ModeCard": {
     "title": "Modi",
     "description": "Wählen Sie Ihren Modus oder passen Sie Ihren Stil an",

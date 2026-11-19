@@ -1,11 +1,12 @@
 {
   "name": "@workspace/core",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "type": "module",
   "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf .turbo"
+    "clean": "rimraf .turbo",
+    "test": "vitest run"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.11.0",
@@ -27,7 +28,8 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@workspace/typescript-config": "workspace:*",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.12"
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",

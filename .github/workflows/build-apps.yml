@@ -1,6 +1,9 @@
 name: Build Apps
 
 on:
+  push:
+    tags:
+      - 'v[0-9]*'
   workflow_dispatch:
     inputs:
       tag_name:
@@ -36,33 +39,126 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-apps-${{ inputs.tag_name || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      draft: ${{ steps.release.outputs.draft }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASE_TAG: ${{ inputs.tag_name || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag_name || github.ref_name }}
+
+      - name: Verify the tag and prepare the release
+        id: release
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Expected a stable release tag in vX.Y.Z format."
+            exit 1
+          fi
+          jq -e --arg version "${RELEASE_TAG#v}" '.version == $version' \
+            apps/native/src-tauri/tauri.conf.json > /dev/null
+
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --draft \
+              --title "Passly $RELEASE_TAG" --generate-notes
+          fi
+          draft=$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "draft=$draft" >> "$GITHUB_OUTPUT"
+
   build-desktop:
-    if: ${{ inputs.build_windows || inputs.build_macos || inputs.build_linux }}
+    needs: prepare-release
+    if: ${{ github.event_name == 'push' || inputs.build_windows || inputs.build_macos || inputs.build_linux }}
     uses: ./.github/workflows/build-desktop.yml
     with:
-      tag_name: ${{ inputs.tag_name }}
-      build_windows: ${{ inputs.build_windows }}
-      build_macos: ${{ inputs.build_macos }}
-      build_linux: ${{ inputs.build_linux }}
+      tag_name: ${{ needs.prepare-release.outputs.tag }}
+      release_draft: ${{ fromJSON(needs.prepare-release.outputs.draft) }}
+      build_windows: ${{ github.event_name == 'push' || inputs.build_windows }}
+      build_macos: ${{ github.event_name == 'push' || inputs.build_macos }}
+      build_linux: ${{ github.event_name == 'push' || inputs.build_linux }}
     secrets: inherit
-    permissions:
-      contents: write
 
   build-split-apk:
-    if: ${{ inputs.build_android_split }}
+    needs: prepare-release
+    if: ${{ github.event_name == 'push' || inputs.build_android_split }}
     uses: ./.github/workflows/build-split-apk.yml
     with:
-      tag_name: ${{ inputs.tag_name }}
+      tag_name: ${{ needs.prepare-release.outputs.tag }}
     secrets: inherit
-    permissions:
-      contents: write
 
   build-universal-apk:
-    if: ${{ inputs.build_android_universal }}
+    needs: prepare-release
+    if: ${{ github.event_name == 'push' || inputs.build_android_universal }}
     uses: ./.github/workflows/build-universal-apk.yml
     with:
-      tag_name: ${{ inputs.tag_name }}
+      tag_name: ${{ needs.prepare-release.outputs.tag }}
     secrets: inherit
-    permissions:
-      contents: write
+
+  publish-release:
+    needs: [prepare-release, build-desktop, build-split-apk, build-universal-apk]
+    if: >-
+      ${{ !cancelled() && needs.prepare-release.outputs.draft == 'true' &&
+        (needs.build-desktop.result == 'success' || needs.build-desktop.result == 'skipped') &&
+        (needs.build-split-apk.result == 'success' || needs.build-split-apk.result == 'skipped') &&
+        (needs.build-universal-apk.result == 'success' || needs.build-universal-apk.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ needs.prepare-release.outputs.tag }}
+    steps:
+      - name: Verify installers and signed updater assets
+        run: |
+          assets=$(gh release view "$RELEASE_TAG" --json assets \
+            --jq '.assets[] | select(.state == "uploaded" and .size > 0) | .name')
+          require_asset() {
+            if ! grep -Eiq "$1" <<< "$assets"; then
+              echo "::error::Missing release asset matching $1"
+              exit 1
+            fi
+          }
+
+          require_asset '_windows_x64\.exe$'
+          require_asset '_windows_x64\.msi$'
+          require_asset '_macos_aarch64\.dmg$'
+          require_asset '_macos_x64\.dmg$'
+          require_asset '_linux_.*\.appimage$'
+          require_asset '_linux_.*\.deb$'
+          require_asset '_linux_.*\.rpm$'
+          require_asset '_android_universal(-debug)?\.apk$'
+          for abi in arm64 arm x86 x86_64; do
+            require_asset "_android_$abi(-debug)?\.apk$"
+          done
+
+          gh release download "$RELEASE_TAG" --pattern latest.json
+          jq -e --arg version "${RELEASE_TAG#v}" \
+            --arg prefix "$GITHUB_SERVER_URL/$GH_REPO/releases/download/$RELEASE_TAG/" '
+            .version == $version and
+            (.platforms as $platforms |
+              all(["darwin-aarch64", "darwin-x86_64", "linux-x86_64", "windows-x86_64"][];
+                $platforms[.] |
+                (.signature | type == "string" and length > 0) and
+                (.url | startswith($prefix))))
+          ' latest.json > /dev/null
+
+          while IFS= read -r url; do
+            file="${url##*/}"
+            for asset in "$file" "$file.sig"; do
+              if ! grep -Fxq "$asset" <<< "$assets"; then
+                echo "::error::Updater asset is missing: $asset"
+                exit 1
+              fi
+            done
+          done < <(jq -r '.platforms[].url' latest.json)
+
+      - name: Publish the complete release
+        run: gh release edit "$RELEASE_TAG" --draft=false --latest

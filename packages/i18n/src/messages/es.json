@@ -25,6 +25,21 @@
     "title": "Idioma",
     "description": "Seleccione su idioma preferido"
   },
+  "ChangeMasterPassword": {
+    "title": "Cambiar contraseña maestra",
+    "description": "La longitud mínima de la nueva contraseña maestra es de {minimum}.",
+    "currentPassword": "Contraseña maestra actual",
+    "newPassword": "Nueva contraseña maestra",
+    "confirmPassword": "Confirma la nueva contraseña maestra",
+    "submit": "Cambiar contraseña",
+    "pending": "Cambiando contraseña…",
+    "success": "Contraseña maestra cambiada.",
+    "mismatch": "Las nuevas contraseñas no coinciden.",
+    "invalidCurrent": "La contraseña maestra actual es incorrecta.",
+    "invalidNew": "Introduce una nueva contraseña maestra.",
+    "samePassword": "Elige una contraseña maestra diferente.",
+    "failed": "No se pudo cambiar la contraseña maestra."
+  },
   "ModeCard": {
     "title": "Modos",
     "description": "Elija su modo o personalice su estilo",

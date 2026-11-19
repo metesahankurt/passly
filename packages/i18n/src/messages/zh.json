@@ -25,6 +25,21 @@
     "title": "语言",
     "description": "选择您的首选语言"
   },
+  "ChangeMasterPassword": {
+    "title": "更改主密码",
+    "description": "新主密码至少需要 {minimum} 个字符。",
+    "currentPassword": "当前主密码",
+    "newPassword": "新主密码",
+    "confirmPassword": "确认新主密码",
+    "submit": "更改密码",
+    "pending": "正在更改密码…",
+    "success": "主密码已更改。",
+    "mismatch": "两次输入的新密码不一致。",
+    "invalidCurrent": "当前主密码不正确。",
+    "invalidNew": "请输入新主密码。",
+    "samePassword": "请选择与当前密码不同的主密码。",
+    "failed": "无法更改主密码。"
+  },
   "ModeCard": {
     "title": "模式",
     "description": "选择您的模式或自定义您的样式",
